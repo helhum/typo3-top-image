@@ -5,6 +5,7 @@ namespace Helhum\TopImage\Tests\Unit\TCA;
 
 use Helhum\TopImage\Definition\CropVariant;
 use Helhum\TopImage\Definition\ImageManipulation;
+use Helhum\TopImage\Definition\TCA;
 use Helhum\TopImage\TCA\CropVariantGenerator;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -42,7 +43,7 @@ class CropVariantGeneratorTest extends TestCase
                 ],
             ],
         ];
-        $result = $generator->createImageManipulationOverrides($tca);
+        $result = $generator->createImageManipulationOverrides(new TCA($tca))->get();
         $expectedTca = array_replace_recursive(
             $tca,
             [

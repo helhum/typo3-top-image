@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace Helhum\TopImage\TCA;
 
+use Helhum\TopImage\Definition\CropVariant;
 use Helhum\TopImage\Definition\ImageManipulation;
+use Helhum\TopImage\Definition\Ratio;
+use Helhum\TopImage\Definition\TCA;
 
 class CropVariantGenerator
 {
@@ -15,38 +18,60 @@ class CropVariantGenerator
 
     }
 
-    /**
-     * @param array<mixed> $tca
-     * @return array<mixed>
-     */
-    public function createImageManipulationOverrides(array $tca): array
+    public function createImageManipulationOverrides(TCA $tca): TCA
     {
         foreach ($this->imageManipulationDefinitions as $imageManipulationDefinition) {
-            if (!is_array($tca[$imageManipulationDefinition->table]['types'] ?? null)) {
+            $typesPath = sprintf('%s.types', $imageManipulationDefinition->table);
+            $types = $tca->get(
+                $typesPath,
+                null,
+            );
+            if (!is_array($types)) {
                 continue;
             }
-            foreach ($tca[$imageManipulationDefinition->table]['types'] as $type => &$typeConfig) {
+            foreach ($types as $type => $_) {
                 if ($imageManipulationDefinition->type !== null && $imageManipulationDefinition->type !== $type) {
                     continue;
                 }
                 foreach ($imageManipulationDefinition->cropVariants as $cropVariant) {
-                    $aspectRatios = [];
-                    foreach ($cropVariant->allowedAspectRatios as $aspectRatio) {
-                        $aspectRatios[$aspectRatio->id] = [
-                            'title' => $aspectRatio->title,
-                            'value' => $aspectRatio->value,
-                        ];
-                    }
-                    $typeConfig['columnsOverrides'][$imageManipulationDefinition->field]['config']['overrideChildTca']['columns']['crop']['config']['cropVariants'][$cropVariant->id] = [
-                        'title' => $cropVariant->title,
-                        'allowedAspectRatios' => $aspectRatios,
-                    ];
+                    $tca = $tca->set(
+                        sprintf('%s.%s.columnsOverrides.%s.config.overrideChildTca.columns.crop.config.cropVariants.%s', $typesPath, $type, $imageManipulationDefinition->field, $cropVariant->id),
+                        $this->cropVariantToTca($cropVariant)
+                    );
                 }
-
             }
-            unset($typeConfig);
         }
 
         return $tca;
+    }
+
+    /**
+     * @param CropVariant $cropVariant
+     * @return array{title: string, allowedAspectRatios: array<string, array{title: string, value: float}>}
+     */
+    private function cropVariantToTca(CropVariant $cropVariant): array
+    {
+        $aspectRatios = [];
+        foreach ($cropVariant->allowedAspectRatios as $aspectRatio) {
+            $aspectRatios[] = $this->aspectRatioToTca($aspectRatio);
+        }
+        $allowedAspectRatios = array_merge([], ...$aspectRatios);
+        return [
+            'title' => $cropVariant->title,
+            'allowedAspectRatios' => $allowedAspectRatios,
+        ];
+    }
+
+    /**
+     * @return non-empty-array<string, array{title: string, value: float}>
+     */
+    private function aspectRatioToTca(Ratio $aspectRation): array
+    {
+        return [
+            $aspectRation->id => [
+                'title' => $aspectRation->title,
+                'value' => $aspectRation->value,
+            ],
+        ];
     }
 }

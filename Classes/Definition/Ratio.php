@@ -12,17 +12,4 @@ class Ratio
         public readonly float $value,
     ) {
     }
-
-    /**
-     * @return non-empty-array<string, array{title: string, value: float}>
-     */
-    public function toTca(): array
-    {
-        return [
-            $this->id => [
-                'title' => $this->title,
-                'value' => $this->value,
-            ],
-        ];
-    }
 }

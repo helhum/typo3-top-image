@@ -32,19 +32,6 @@ class CropVariant
         $this->coverAreas = $coverAreas !== null ? $this->assertCoverAreas(...$coverAreas) : null;
     }
 
-    public function toTca(): array
-    {
-        $aspectRatios = [];
-        foreach ($this->allowedAspectRatios as $aspectRatio) {
-            $aspectRatios[] = $aspectRatio->toTca();
-        }
-        $allowedAspectRatios = array_merge([], ...$aspectRatios);
-        return [
-            'title' => $this->title,
-            'allowedAspectRatios' => $allowedAspectRatios,
-        ];
-    }
-
     /**
      * @return Ratio[]
      * @throws InvalidDefinitionException

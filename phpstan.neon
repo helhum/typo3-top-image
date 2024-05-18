@@ -14,8 +14,7 @@ parameters:
     paths:
          - Classes/
          - Tests/
-    ignoreErrors:
-        - '#^Construct empty\(\) is not allowed. Use more strict comparison\.#'
+    ignoreErrors: []
     excludePaths: []
     typo3:
         requestGetAttributeMapping:

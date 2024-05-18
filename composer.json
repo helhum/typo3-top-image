@@ -2,6 +2,12 @@
     "name": "helhum/typo3-top-image",
     "description": "One stop solution to define crop variants and responsive image rendering",
     "type": "typo3-cms-extension",
+    "config": {
+        "allow-plugins": {
+            "typo3/cms-composer-installers": true,
+            "typo3/class-alias-loader": true
+        }
+    },
     "require": {
         "php": ">=8.1",
         "typo3/cms-core": "^v12.4.15"
@@ -33,10 +39,35 @@
             "extension-key": "top_image"
         }
     },
-    "config": {
-        "allow-plugins": {
-            "typo3/cms-composer-installers": true,
-            "typo3/class-alias-loader": true
-        }
+    "scripts": {
+        "check:cgl": [
+            "php-cs-fixer fix -n --diff --format=txt --dry-run"
+        ],
+        "ci:check:cgl": [
+            "php-cs-fixer fix -n --diff --format=checkstyle --dry-run"
+        ],
+        "fix:cgl": [
+            "php-cs-fixer fix -n --diff --format=txt"
+        ],
+        "ci:fix:cgl": [
+            "php-cs-fixer fix"
+        ],
+        "check:phpstan": [
+            "phpstan"
+        ],
+        "ci:check:phpstan": [
+            "phpstan --error-format=github --no-progress"
+        ],
+        "check": [
+            "@check:cgl",
+            "@check:phpstan"
+        ],
+        "ci:check": [
+            "@ci:check:cgl",
+            "@ci:check:phpstan"
+        ],
+        "fix": [
+            "@fix:cgl"
+        ]
     }
 }

@@ -20,7 +20,7 @@ class TCA
     public function __construct(
         ?array $tca,
     ) {
-        $this->tca = $tca ?? $GLOBALS['TCA'];
+        $this->tca = ArrayUtility::sortByKeyRecursive($tca ?? $GLOBALS['TCA']);
     }
 
     public function get(string $path = null, mixed $default = null): mixed

@@ -29,7 +29,7 @@ class CropVariantGeneratorTest extends TestCase
                 )
             ]
         );
-        $tca = [
+        $tca = new TCA([
             'example_table' => [
                 'columns' => [
                     'example_field' => [
@@ -42,45 +42,138 @@ class CropVariantGeneratorTest extends TestCase
                     ],
                 ],
             ],
+        ]);
+        $result = $generator->createImageManipulationOverrides($tca);
+        $cropVariantConfig = [
+            'test' => [
+                'allowedAspectRatios' => [
+                    'NaN' => [
+                        'title' => 'LLL:EXT:core/Resources/Private/Language/locallang_wizards.xlf:imwizard.ratio.free',
+                        'value' => 0.0,
+                    ],
+                ],
+                'title' => 'Test Label',
+            ],
         ];
-        $result = $generator->createImageManipulationOverrides(new TCA($tca))->get();
-        $expectedTca = array_replace_recursive(
-            $tca,
+        $expectedTca = $tca->set(
+            'example_table.types.0.columnsOverrides.example_field.config.overrideChildTca.columns.crop.config.cropVariants',
+            $cropVariantConfig
+        );
+
+        self::assertSame($expectedTca->get(), $result->get());
+    }
+
+    #[Test]
+    public function generateForCustomTableSetsConfigForConfiguredType(): void
+    {
+        $generator = new CropVariantGenerator(
             [
-                'example_table' => [
-                    'types' => [
-                        0 => [
-                            'columnsOverrides' => [
-                                'example_field' => [
-                                    'config' => [
-                                        'overrideChildTca' => [
-                                            'columns' => [
-                                                'crop' => [
-                                                    'config' => [
-                                                        'cropVariants' => [
-                                                            'test' => [
-                                                                'allowedAspectRatios' => [
-                                                                    'NaN' => [
-                                                                        'title' => 'LLL:EXT:core/Resources/Private/Language/locallang_wizards.xlf:imwizard.ratio.free',
-                                                                        'value' => 0.0,
-                                                                    ],
-                                                                ],
-                                                                'title' => 'Test Label',
-                                                            ],
-                                                        ],
-                                                    ],
-                                                ],
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
+                new ImageManipulation(
+                    [
+                        new CropVariant(
+                            'test',
+                            'Test Label',
+                        )
+                    ],
+                    'example_table',
+                    'example_field',
+                    '0',
+                )
+            ]
+        );
+        $tca = new TCA([
+            'example_table' => [
+                'columns' => [
+                    'example_field' => [
+
+                    ],
+                ],
+                'types' => [
+                    0 => [
+                        'showitem' => 'example_field',
+                    ],
+                    1 => [
+                        'showitem' => 'example_field',
                     ],
                 ],
             ],
+        ]);
+        $result = $generator->createImageManipulationOverrides($tca);
+        $cropVariantConfig = [
+            'test' => [
+                'allowedAspectRatios' => [
+                    'NaN' => [
+                        'title' => 'LLL:EXT:core/Resources/Private/Language/locallang_wizards.xlf:imwizard.ratio.free',
+                        'value' => 0.0,
+                    ],
+                ],
+                'title' => 'Test Label',
+            ],
+        ];
+        $expectedTca = $tca->set(
+            'example_table.types.0.columnsOverrides.example_field.config.overrideChildTca.columns.crop.config.cropVariants',
+            $cropVariantConfig
         );
 
-        self::assertEquals($expectedTca, $result);
+        self::assertSame($expectedTca->get(), $result->get());
+    }
+
+    #[Test]
+    public function generateForCustomTableSetsConfigForAllTypes(): void
+    {
+        $generator = new CropVariantGenerator(
+            [
+                new ImageManipulation(
+                    [
+                        new CropVariant(
+                            'test',
+                            'Test Label',
+                        )
+                    ],
+                    'example_table',
+                    'example_field',
+                )
+            ]
+        );
+        $tca = new TCA([
+            'example_table' => [
+                'columns' => [
+                    'example_field' => [
+
+                    ],
+                ],
+                'types' => [
+                    0 => [
+                        'showitem' => 'example_field',
+                    ],
+                    1 => [
+                        'showitem' => 'example_field',
+                    ],
+                ],
+            ],
+        ]);
+        $result = $generator->createImageManipulationOverrides($tca);
+        $cropVariantConfig = [
+            'test' => [
+                'allowedAspectRatios' => [
+                    'NaN' => [
+                        'title' => 'LLL:EXT:core/Resources/Private/Language/locallang_wizards.xlf:imwizard.ratio.free',
+                        'value' => 0.0,
+                    ],
+                ],
+                'title' => 'Test Label',
+            ],
+        ];
+        $expectedTca = $tca
+            ->set(
+                'example_table.types.0.columnsOverrides.example_field.config.overrideChildTca.columns.crop.config.cropVariants',
+                $cropVariantConfig
+            )
+            ->set(
+                'example_table.types.1.columnsOverrides.example_field.config.overrideChildTca.columns.crop.config.cropVariants',
+                $cropVariantConfig
+            );
+
+        self::assertSame($expectedTca->get(), $result->get());
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Helhum\TopImage\TCA;
 
+use Helhum\TopImage\Definition\Area;
 use Helhum\TopImage\Definition\CropVariant;
 use Helhum\TopImage\Definition\ImageManipulation;
 use Helhum\TopImage\Definition\Ratio;
@@ -15,7 +16,6 @@ class CropVariantGenerator
      */
     public function __construct(private readonly array $imageManipulationDefinitions)
     {
-
     }
 
     public function createImageManipulationOverrides(TCA $tca): TCA
@@ -30,7 +30,7 @@ class CropVariantGenerator
                 continue;
             }
             foreach ($types as $type => $_) {
-                if ($imageManipulationDefinition->type !== null && $imageManipulationDefinition->type !== $type) {
+                if ($imageManipulationDefinition->type !== null && $imageManipulationDefinition->type !== (string)$type) {
                     continue;
                 }
                 foreach ($imageManipulationDefinition->cropVariants as $cropVariant) {
@@ -56,10 +56,22 @@ class CropVariantGenerator
             $aspectRatios[] = $this->aspectRatioToTca($aspectRatio);
         }
         $allowedAspectRatios = array_merge([], ...$aspectRatios);
-        return [
+        $cropVariantTca = [
             'title' => $cropVariant->title,
             'allowedAspectRatios' => $allowedAspectRatios,
         ];
+        if ($cropVariant->focusArea !== null) {
+            $cropVariantTca['focusArea'] = $this->areaToTca($cropVariant->focusArea);
+        }
+        if ($cropVariant->coverAreas !== null) {
+            $coverAreas = [];
+            foreach ($cropVariant->coverAreas as $coverArea) {
+                $coverAreas[] = $this->areaToTca($coverArea);
+            }
+            $cropVariantTca['focusArea'] = $coverAreas;
+        }
+
+        return $cropVariantTca;
     }
 
     /**
@@ -72,6 +84,19 @@ class CropVariantGenerator
                 'title' => $aspectRation->title,
                 'value' => $aspectRation->value,
             ],
+        ];
+    }
+
+    /**
+     * @return array{x: float, y: float, width: float, height: float}
+     */
+    private function areaToTca(Area $area): array
+    {
+        return [
+            'x' => $area->offsetLeft,
+            'y' => $area->offsetTop,
+            'width' => $area->width,
+            'height' => $area->height,
         ];
     }
 }

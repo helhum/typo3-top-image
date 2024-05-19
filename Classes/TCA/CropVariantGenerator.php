@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Helhum\TopImage\TCA;
@@ -18,7 +19,7 @@ class CropVariantGenerator
     {
     }
 
-    public function createImageManipulationOverrides(TCA $tca): TCA
+    public function createImageManipulationTca(TCA $tca): TCA
     {
         foreach ($this->imageManipulationDefinitions as $imageManipulationDefinition) {
             $typesPath = sprintf('%s.types', $imageManipulationDefinition->table);

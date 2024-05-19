@@ -1,6 +1,7 @@
+/.php-cs-fixer.cache
+/.phpunit.cache
+/composer.lock
+/config
 /public
 /var
 /vendor
-/composer.lock
-/.php-cs-fixer.cache
-/.phpunit.cache

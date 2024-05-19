@@ -1,0 +1,15 @@
+{
+    "name": "helhum/typo3-top-image-fixture-example-one",
+    "type": "typo3-cms-extension",
+    "version": "1.0.0",
+    "autoload": {
+        "psr-4": {
+            "Helhum\\TopImage\\Tests\\Fixture\\ExampleOne\\": "Classes/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "top_image_example_one"
+        }
+    }
+}

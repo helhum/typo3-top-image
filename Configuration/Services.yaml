@@ -6,3 +6,12 @@ services:
 
     Helhum\TopImage\:
         resource: '../Classes/*'
+
+    Helhum\TopImage\TCA\CropVariantGenerator:
+        factory: ['@Helhum\TopImage\TCA\CropVariantGeneratorFactory', 'createGenerator']
+
+    Helhum\TopImage\Listener\CropVariantTcaListener:
+        tags:
+          - name: event.listener
+            identifier: 'top-image-tca'
+            method: addCropVariantsToTca

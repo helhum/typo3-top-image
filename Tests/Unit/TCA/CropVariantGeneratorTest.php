@@ -43,7 +43,7 @@ class CropVariantGeneratorTest extends TestCase
                 ],
             ],
         ]);
-        $result = $generator->createImageManipulationOverrides($tca);
+        $result = $generator->createImageManipulationTca($tca);
         $cropVariantConfig = [
             'test' => [
                 'allowedAspectRatios' => [
@@ -98,7 +98,7 @@ class CropVariantGeneratorTest extends TestCase
                 ],
             ],
         ]);
-        $result = $generator->createImageManipulationOverrides($tca);
+        $result = $generator->createImageManipulationTca($tca);
         $cropVariantConfig = [
             'test' => [
                 'allowedAspectRatios' => [
@@ -116,6 +116,7 @@ class CropVariantGeneratorTest extends TestCase
         );
 
         self::assertSame($expectedTca->get(), $result->get());
+        self::assertNull($expectedTca->get('example_table.types.1.columnsOverrides', null));
     }
 
     #[Test]
@@ -152,7 +153,7 @@ class CropVariantGeneratorTest extends TestCase
                 ],
             ],
         ]);
-        $result = $generator->createImageManipulationOverrides($tca);
+        $result = $generator->createImageManipulationTca($tca);
         $cropVariantConfig = [
             'test' => [
                 'allowedAspectRatios' => [

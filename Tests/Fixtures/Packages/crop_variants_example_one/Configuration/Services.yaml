@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Helhum\TopImage\Tests\Fixture\ExampleOne\:
+        resource: '../Classes/*'

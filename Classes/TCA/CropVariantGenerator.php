@@ -6,23 +6,23 @@ namespace Helhum\TopImage\TCA;
 
 use Helhum\TopImage\Definition\Area;
 use Helhum\TopImage\Definition\CropVariant;
-use Helhum\TopImage\Definition\ImageManipulation;
+use Helhum\TopImage\Definition\ImageVariant;
 use Helhum\TopImage\Definition\Ratio;
 use Helhum\TopImage\Definition\TCA;
 
 class CropVariantGenerator
 {
     /**
-     * @param ImageManipulation[] $imageManipulationDefinitions
+     * @param ImageVariant[] $imageVariants
      */
-    public function __construct(private readonly array $imageManipulationDefinitions)
+    public function __construct(private readonly array $imageVariants)
     {
     }
 
-    public function createImageManipulationTca(TCA $tca): TCA
+    public function createTca(TCA $tca): TCA
     {
-        foreach ($this->imageManipulationDefinitions as $imageManipulationDefinition) {
-            $typesPath = sprintf('%s.types', $imageManipulationDefinition->table);
+        foreach ($this->imageVariants as $imageVariant) {
+            $typesPath = sprintf('%s.types', $imageVariant->table);
             $types = $tca->get(
                 $typesPath,
                 null,
@@ -31,12 +31,12 @@ class CropVariantGenerator
                 continue;
             }
             foreach ($types as $type => $_) {
-                if ($imageManipulationDefinition->type !== null && $imageManipulationDefinition->type !== (string)$type) {
+                if ($imageVariant->type !== null && $imageVariant->type !== (string)$type) {
                     continue;
                 }
-                foreach ($imageManipulationDefinition->cropVariants as $cropVariant) {
+                foreach ($imageVariant->cropVariants as $cropVariant) {
                     $tca = $tca->set(
-                        sprintf('%s.%s.columnsOverrides.%s.config.overrideChildTca.columns.crop.config.cropVariants.%s', $typesPath, $type, $imageManipulationDefinition->field, $cropVariant->id),
+                        sprintf('%s.%s.columnsOverrides.%s.config.overrideChildTca.columns.crop.config.cropVariants.%s', $typesPath, $type, $imageVariant->field, $cropVariant->id),
                         $this->cropVariantToTca($cropVariant)
                     );
                 }

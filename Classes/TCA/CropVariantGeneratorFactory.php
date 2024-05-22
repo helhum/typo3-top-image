@@ -7,22 +7,22 @@ namespace Helhum\TopImage\TCA;
 class CropVariantGeneratorFactory
 {
     /**
-     * @var ImageManipulationConfigurationInterface[]
+     * @var ImageVariantConfigurationInterface[]
      */
-    private readonly array $imageManipulationDefinitions;
+    private readonly array $imageVariantConfiguration;
 
-    public function __construct(ImageManipulationConfigurationInterface ...$imageManipulationDefinitions)
+    public function __construct(ImageVariantConfigurationInterface ...$imageVariantConfigurations)
     {
-        $this->imageManipulationDefinitions = $imageManipulationDefinitions;
+        $this->imageVariantConfiguration = $imageVariantConfigurations;
     }
 
     public function createGenerator(): CropVariantGenerator
     {
-        $collectedDefinitions = [];
-        foreach ($this->imageManipulationDefinitions as $definitions) {
-            $collectedDefinitions[] = $definitions->getImageManipulationDefinitions();
+        $imageVariants = [];
+        foreach ($this->imageVariantConfiguration as $configuration) {
+            $imageVariants[] = $configuration->getImageVariantDefinitions();
         }
 
-        return new CropVariantGenerator(array_merge([], ...$collectedDefinitions));
+        return new CropVariantGenerator(array_merge([], ...$imageVariants));
     }
 }

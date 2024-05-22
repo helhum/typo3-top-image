@@ -18,7 +18,7 @@ class CropVariantTcaListener
     public function addCropVariantsToTca(AfterTcaCompilationEvent $event): void
     {
         $event->setTca(
-            $this->cropVariantGenerator->createImageManipulationTca(new TCA($event->getTca()))->get()
+            $this->cropVariantGenerator->createTca(new TCA($event->getTca()))->get()
         );
     }
 }

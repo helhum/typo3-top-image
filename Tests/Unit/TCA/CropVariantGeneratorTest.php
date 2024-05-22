@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Helhum\TopImage\Tests\Unit\TCA;
 
 use Helhum\TopImage\Definition\CropVariant;
-use Helhum\TopImage\Definition\ImageManipulation;
+use Helhum\TopImage\Definition\ImageVariant;
 use Helhum\TopImage\Definition\TCA;
 use Helhum\TopImage\TCA\CropVariantGenerator;
 use PHPUnit\Framework\Attributes\Test;
@@ -17,7 +17,7 @@ class CropVariantGeneratorTest extends TestCase
     {
         $generator = new CropVariantGenerator(
             [
-                new ImageManipulation(
+                new ImageVariant(
                     [
                         new CropVariant(
                             'test',
@@ -43,7 +43,7 @@ class CropVariantGeneratorTest extends TestCase
                 ],
             ],
         ]);
-        $result = $generator->createImageManipulationTca($tca);
+        $result = $generator->createTca($tca);
         $cropVariantConfig = [
             'test' => [
                 'allowedAspectRatios' => [
@@ -68,7 +68,7 @@ class CropVariantGeneratorTest extends TestCase
     {
         $generator = new CropVariantGenerator(
             [
-                new ImageManipulation(
+                new ImageVariant(
                     [
                         new CropVariant(
                             'test',
@@ -98,7 +98,7 @@ class CropVariantGeneratorTest extends TestCase
                 ],
             ],
         ]);
-        $result = $generator->createImageManipulationTca($tca);
+        $result = $generator->createTca($tca);
         $cropVariantConfig = [
             'test' => [
                 'allowedAspectRatios' => [
@@ -124,7 +124,7 @@ class CropVariantGeneratorTest extends TestCase
     {
         $generator = new CropVariantGenerator(
             [
-                new ImageManipulation(
+                new ImageVariant(
                     [
                         new CropVariant(
                             'test',
@@ -153,7 +153,7 @@ class CropVariantGeneratorTest extends TestCase
                 ],
             ],
         ]);
-        $result = $generator->createImageManipulationTca($tca);
+        $result = $generator->createTca($tca);
         $cropVariantConfig = [
             'test' => [
                 'allowedAspectRatios' => [

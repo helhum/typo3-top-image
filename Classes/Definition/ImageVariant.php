@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Helhum\TopImage\Definition;
 
-class ImageManipulation
+class ImageVariant
 {
     /**
      * @param CropVariant[] $cropVariants
-     * @param string|null $type
      */
     public function __construct(
         public readonly array $cropVariants,

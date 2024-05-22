@@ -4,14 +4,14 @@ declare(strict_types=1);
 namespace Helhum\TopImage\Tests\Fixture\ExampleOne;
 
 use Helhum\TopImage\Definition;
-use Helhum\TopImage\TCA\ImageManipulationConfigurationInterface;
+use Helhum\TopImage\TCA\ImageVariantConfigurationInterface;
 
-class CropVariants implements ImageManipulationConfigurationInterface
+class CropVariants implements ImageVariantConfigurationInterface
 {
-    public function getImageManipulationDefinitions(): array
+    public function getImageVariantDefinitions(): array
     {
         return [
-            new Definition\ImageManipulation(
+            new Definition\ImageVariant(
                 cropVariants: [
                     new Definition\CropVariant(
                         id: 'test',

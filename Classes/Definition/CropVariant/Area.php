@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helhum\TopImage\Definition;
+namespace Helhum\TopImage\Definition\CropVariant;
 
 class Area
 {

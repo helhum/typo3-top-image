@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Helhum\TopImage\Tests\Unit\Definition;
 
 use Helhum\TopImage\Definition\CropVariant;
-use Helhum\TopImage\Definition\FreeRatio;
+use Helhum\TopImage\Definition\CropVariant\FreeRatio;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 

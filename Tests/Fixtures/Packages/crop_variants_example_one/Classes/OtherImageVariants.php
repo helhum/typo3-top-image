@@ -22,7 +22,7 @@ class OtherImageVariants implements ImageVariantConfigurationInterface
                         id: 'other_test',
                         title: 'Other Test Label',
                         allowedAspectRatios: [
-                            new Definition\FreeRatio()
+                            new Definition\CropVariant\FreeRatio()
                         ],
                     ),
                 ],

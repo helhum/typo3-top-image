@@ -18,12 +18,22 @@ class ImageVariants implements ImageVariantConfigurationInterface
                     field: 'example_field',
                     type: '0',
                 ),
+                sources: [
+                    new Definition\ImageSource(
+                        widths: [
+                            500,
+                        ],
+                        artDirection: new Definition\ImageSource\ArtDirection(
+                            'test',
+                        ),
+                    ),
+                ],
                 cropVariants: [
                     new Definition\CropVariant(
                         id: 'test',
                         title: 'Test Label',
                         allowedAspectRatios: [
-                            new Definition\FreeRatio()
+                            new Definition\CropVariant\FreeRatio()
                         ],
                     ),
                 ],

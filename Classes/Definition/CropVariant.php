@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Helhum\TopImage\Definition;
 
+use Helhum\TopImage\Definition\CropVariant\Area;
+use Helhum\TopImage\Definition\CropVariant\FreeRatio;
+use Helhum\TopImage\Definition\CropVariant\Ratio;
+
 class CropVariant
 {
     /**

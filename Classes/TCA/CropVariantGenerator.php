@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Helhum\TopImage\TCA;
 
-use Helhum\TopImage\Definition\Area;
 use Helhum\TopImage\Definition\CropVariant;
+use Helhum\TopImage\Definition\CropVariant\Area;
+use Helhum\TopImage\Definition\CropVariant\Ratio;
 use Helhum\TopImage\Definition\ImageVariant;
-use Helhum\TopImage\Definition\Ratio;
 use Helhum\TopImage\Definition\TCA;
 
 class CropVariantGenerator

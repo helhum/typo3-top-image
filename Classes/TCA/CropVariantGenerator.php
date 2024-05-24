@@ -22,7 +22,7 @@ class CropVariantGenerator
     public function createTca(TCA $tca): TCA
     {
         foreach ($this->imageVariants as $imageVariant) {
-            $typesPath = sprintf('%s.types', $imageVariant->table);
+            $typesPath = sprintf('%s.types', $imageVariant->appliesTo->table);
             $types = $tca->get(
                 $typesPath,
                 null,
@@ -31,12 +31,15 @@ class CropVariantGenerator
                 continue;
             }
             foreach ($types as $type => $_) {
-                if ($imageVariant->type !== null && $imageVariant->type !== (string)$type) {
+                if ($imageVariant->cropVariants === null) {
+                    continue;
+                }
+                if ($imageVariant->appliesTo->type !== null && $imageVariant->appliesTo->type !== (string)$type) {
                     continue;
                 }
                 foreach ($imageVariant->cropVariants as $cropVariant) {
                     $tca = $tca->set(
-                        sprintf('%s.%s.columnsOverrides.%s.config.overrideChildTca.columns.crop.config.cropVariants.%s', $typesPath, $type, $imageVariant->field, $cropVariant->id),
+                        sprintf('%s.%s.columnsOverrides.%s.config.overrideChildTca.columns.crop.config.cropVariants.%s', $typesPath, $type, $imageVariant->appliesTo->field, $cropVariant->id),
                         $this->cropVariantToTca($cropVariant)
                     );
                 }

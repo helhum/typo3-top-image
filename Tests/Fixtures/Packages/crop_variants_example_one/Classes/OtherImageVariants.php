@@ -13,6 +13,10 @@ class OtherImageVariants implements ImageVariantConfigurationInterface
         return [
             new Definition\ImageVariant(
                 id: 'otherExample',
+                appliesTo: new Definition\ContentField(
+                    table: 'other_example_table',
+                    field: 'other_example_field',
+                ),
                 cropVariants: [
                     new Definition\CropVariant(
                         id: 'other_test',
@@ -22,8 +26,6 @@ class OtherImageVariants implements ImageVariantConfigurationInterface
                         ],
                     ),
                 ],
-                table: 'other_example_table',
-                field: 'other_example_field',
             )
         ];
     }

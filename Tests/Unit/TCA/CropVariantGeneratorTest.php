@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Helhum\TopImage\Tests\Unit\TCA;
 
+use Helhum\TopImage\Definition\ContentField;
 use Helhum\TopImage\Definition\CropVariant;
 use Helhum\TopImage\Definition\ImageVariant;
 use Helhum\TopImage\Definition\TCA;
@@ -19,14 +20,16 @@ class CropVariantGeneratorTest extends TestCase
             [
                 new ImageVariant(
                     id: 'test',
+                    appliesTo: new ContentField(
+                        table: 'example_table',
+                        field: 'example_field',
+                    ),
                     cropVariants: [
                         new CropVariant(
                             'test',
                             'Test Label',
                         )
                     ],
-                    table: 'example_table',
-                    field: 'example_field',
                 )
             ]
         );
@@ -71,15 +74,17 @@ class CropVariantGeneratorTest extends TestCase
             [
                 new ImageVariant(
                     id: 'test',
+                    appliesTo: new ContentField(
+                        table: 'example_table',
+                        field: 'example_field',
+                        type: '0',
+                    ),
                     cropVariants: [
                         new CropVariant(
                             'test',
                             'Test Label',
                         )
                     ],
-                    table: 'example_table',
-                    field: 'example_field',
-                    type: '0',
                 )
             ]
         );
@@ -128,14 +133,16 @@ class CropVariantGeneratorTest extends TestCase
             [
                 new ImageVariant(
                     id: 'test',
+                    appliesTo: new ContentField(
+                        table: 'example_table',
+                        field: 'example_field',
+                    ),
                     cropVariants: [
                         new CropVariant(
                             'test',
                             'Test Label',
                         )
                     ],
-                    table: 'example_table',
-                    field: 'example_field',
                 )
             ]
         );

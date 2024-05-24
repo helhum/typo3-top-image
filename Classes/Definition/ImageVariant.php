@@ -11,10 +11,8 @@ class ImageVariant
      */
     public function __construct(
         public readonly string $id,
-        public readonly array $cropVariants,
-        public readonly string $table,
-        public readonly string $field,
-        public readonly ?string $type = null,
+        public readonly ContentField $appliesTo,
+        public readonly ?array $cropVariants = null,
     ) {
     }
 }

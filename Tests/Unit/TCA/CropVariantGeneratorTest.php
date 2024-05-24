@@ -18,14 +18,15 @@ class CropVariantGeneratorTest extends TestCase
         $generator = new CropVariantGenerator(
             [
                 new ImageVariant(
-                    [
+                    id: 'test',
+                    cropVariants: [
                         new CropVariant(
                             'test',
                             'Test Label',
                         )
                     ],
-                    'example_table',
-                    'example_field',
+                    table: 'example_table',
+                    field: 'example_field',
                 )
             ]
         );
@@ -69,15 +70,16 @@ class CropVariantGeneratorTest extends TestCase
         $generator = new CropVariantGenerator(
             [
                 new ImageVariant(
-                    [
+                    id: 'test',
+                    cropVariants: [
                         new CropVariant(
                             'test',
                             'Test Label',
                         )
                     ],
-                    'example_table',
-                    'example_field',
-                    '0',
+                    table: 'example_table',
+                    field: 'example_field',
+                    type: '0',
                 )
             ]
         );
@@ -125,14 +127,15 @@ class CropVariantGeneratorTest extends TestCase
         $generator = new CropVariantGenerator(
             [
                 new ImageVariant(
-                    [
+                    id: 'test',
+                    cropVariants: [
                         new CropVariant(
                             'test',
                             'Test Label',
                         )
                     ],
-                    'example_table',
-                    'example_field',
+                    table: 'example_table',
+                    field: 'example_field',
                 )
             ]
         );

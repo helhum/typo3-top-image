@@ -6,12 +6,13 @@ namespace Helhum\TopImage\Tests\Fixture\ExampleOne;
 use Helhum\TopImage\Definition;
 use Helhum\TopImage\TCA\ImageVariantConfigurationInterface;
 
-class CropVariants implements ImageVariantConfigurationInterface
+class ImageVariants implements ImageVariantConfigurationInterface
 {
     public function getImageVariantDefinitions(): array
     {
         return [
             new Definition\ImageVariant(
+                id: 'example',
                 cropVariants: [
                     new Definition\CropVariant(
                         id: 'test',

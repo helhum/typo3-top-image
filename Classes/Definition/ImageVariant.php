@@ -10,6 +10,7 @@ class ImageVariant
      * @param CropVariant[] $cropVariants
      */
     public function __construct(
+        public readonly string $id,
         public readonly array $cropVariants,
         public readonly string $table,
         public readonly string $field,

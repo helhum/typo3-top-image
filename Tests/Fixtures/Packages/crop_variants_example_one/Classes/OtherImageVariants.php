@@ -26,7 +26,41 @@ class OtherImageVariants implements ImageVariantConfigurationInterface
                         ],
                     ),
                 ],
-            )
+            ),
+            new Definition\ImageVariant(
+                id: 'content',
+                appliesTo: new Definition\ContentField(
+                    table: 'tt_content',
+                    field: 'image',
+                    type: 'image',
+                ),
+                cropVariants: [
+                    new Definition\CropVariant(
+                        id: 'image_test',
+                        title: 'Image Test',
+                        allowedAspectRatios: [
+                            new Definition\CropVariant\FreeRatio()
+                        ],
+                    ),
+                ],
+            ),
+            new Definition\ImageVariant(
+                id: 'other-content',
+                appliesTo: new Definition\ContentField(
+                    table: 'tt_content',
+                    field: 'image',
+                    type: 'image',
+                ),
+                cropVariants: [
+                    new Definition\CropVariant(
+                        id: 'other_image',
+                        title: 'Other Image Test',
+                        allowedAspectRatios: [
+                            new Definition\CropVariant\FreeRatio()
+                        ],
+                    ),
+                ],
+            ),
         ];
     }
 }

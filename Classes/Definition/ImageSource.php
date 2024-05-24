@@ -12,8 +12,8 @@ class ImageSource
      */
     public function __construct(
         public readonly array $widths,
-        public readonly ?ImageSource\ArtDirection $artDirection = null,
         public readonly ?array $sizes = null,
+        public readonly ?ImageSource\ArtDirection $artDirection = null,
     ) {
     }
 }

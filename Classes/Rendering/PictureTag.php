@@ -11,9 +11,13 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 class PictureTag
 {
+    /**
+     * @param array<non-empty-string, string> $additionalTagAttributes
+     */
     public function __construct(
         private readonly ImageVariant $imageVariant,
         private readonly FileReference $fileReference,
+        private readonly array $additionalTagAttributes = [],
     ) {
     }
 
@@ -35,7 +39,11 @@ class PictureTag
                 $source->artDirection?->cropVariant,
             );
         }
-        $tagContent .= (new ImgTag(source: $fallbackSource, fileReference: $this->fileReference))->build()->render();
+        $imageTag = (new ImgTag(source: $fallbackSource, fileReference: $this->fileReference))->build();
+        foreach ($this->additionalTagAttributes as $name => $value) {
+            $imageTag->addAttribute($name, $value);
+        }
+        $tagContent .= $imageTag->render();
         $pictureTag->setContent($tagContent);
 
         return $pictureTag;

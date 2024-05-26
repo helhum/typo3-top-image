@@ -85,8 +85,9 @@ class PictureTagTest extends FunctionalTestCase
         $pictureTag = new PictureTag(
             imageVariant: $imageVariant,
             fileReference: $fileReference,
+            additionalTagAttributes: ['class' => 'module_image'],
         );
-        self::assertSame(sprintf('<picture><source srcset="%1$s 300w" /><img src="%1$s" width="300" height="200" /></picture>', $this->processExpectedFile($fileReference, 300)->getPublicUrl()), $pictureTag->build()->render());
+        self::assertSame(sprintf('<picture><source srcset="%1$s 300w" /><img src="%1$s" width="300" height="200" class="module_image" /></picture>', $this->processExpectedFile($fileReference, 300)->getPublicUrl()), $pictureTag->build()->render());
     }
 
     #[Test]

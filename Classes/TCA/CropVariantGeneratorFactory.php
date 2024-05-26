@@ -16,7 +16,7 @@ class CropVariantGeneratorFactory
 
     public function __construct(ImageVariantCollection $imageVariantCollection)
     {
-        $this->imageVariants = $imageVariantCollection->imageVariants->toArray();
+        $this->imageVariants = $imageVariantCollection->asArray();
     }
 
     public function createGenerator(): CropVariantGenerator

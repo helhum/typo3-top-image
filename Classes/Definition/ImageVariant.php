@@ -6,6 +6,7 @@ namespace Helhum\TopImage\Definition;
 
 use Ds\Map;
 use Ds\Set;
+use Helhum\TopImage\Definition\ImageSource\FallbackSource;
 
 class ImageVariant
 {
@@ -27,9 +28,13 @@ class ImageVariant
         public readonly string $id,
         public readonly ContentField $appliesTo,
         public readonly ?array $sources = null,
+        public readonly ?FallbackSource $fallbackSource = null,
         public readonly ?array $cropVariants = null,
     ) {
         $this->cropVariantsMap = $this->createCropVariantsMap($this->cropVariants);
+        if ($this->fallbackSource?->cropVariant !== null && !$this->cropVariantsMap->hasKey($this->fallbackSource->cropVariant)) {
+            throw new InvalidDefinitionException(sprintf('Invalid crop variant "%s" defined in fallback source', $this->fallbackSource->cropVariant), 1716650213);
+        }
         $sourcesSet = $this->createSourcesSet($this->sources);
     }
 

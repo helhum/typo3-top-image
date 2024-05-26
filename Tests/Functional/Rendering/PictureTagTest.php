@@ -86,7 +86,7 @@ class PictureTagTest extends FunctionalTestCase
             imageVariant: $imageVariant,
             fileReference: $fileReference,
         );
-        self::assertSame(sprintf('<picture><source srcset="%1$s 300w" /><img src="%1$s" width="300" height="200" alt="" title="" /></picture>', $this->processExpectedFile($fileReference, 300)->getPublicUrl()), $pictureTag->build()->render());
+        self::assertSame(sprintf('<picture><source srcset="%1$s 300w" /><img src="%1$s" width="300" height="200" /></picture>', $this->processExpectedFile($fileReference, 300)->getPublicUrl()), $pictureTag->build()->render());
     }
 
     #[Test]
@@ -143,7 +143,7 @@ class PictureTagTest extends FunctionalTestCase
 
         self::assertSame(
             sprintf(
-                '<picture><source srcset="%1$s 300w, %2$s 600w" sizes="(min-width: 760px) 50vw, 100vw" media="(max-width: 2048px)" /><source srcset="%3$s 1100w" /><img src="%3$s" width="1100" height="857" alt="" title="" /></picture>',
+                '<picture><source srcset="%1$s 300w, %2$s 600w" sizes="(min-width: 760px) 50vw, 100vw" media="(max-width: 2048px)" /><source srcset="%3$s 1100w" /><img src="%3$s" width="1100" height="857" /></picture>',
                 $this->processExpectedFile($fileReference, 300, $cropVariant)->getPublicUrl(),
                 $this->processExpectedFile($fileReference, 600, $cropVariant)->getPublicUrl(),
                 $this->processExpectedFile($fileReference, 1100, $cropVariant)->getPublicUrl(),

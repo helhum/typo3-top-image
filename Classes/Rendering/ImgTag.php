@@ -19,6 +19,7 @@ class ImgTag
     public function build(): TagBuilder
     {
         $imgTag = new TagBuilder('img');
+        $imgTag->ignoreEmptyAttributes(true);
         $processing = new ProcessingInstructions(
             forFile: $this->fileReference,
             width: $this->source->width,

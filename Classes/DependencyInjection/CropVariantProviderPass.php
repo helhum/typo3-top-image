@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Helhum\TopImage\DependencyInjection;
 
-use Helhum\TopImage\TCA\CropVariantGeneratorFactory;
+use Helhum\TopImage\Definition\ImageVariantCollection;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use TYPO3\CMS\Core\Service\DependencyOrderingService;
@@ -27,15 +27,15 @@ final class CropVariantProviderPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasDefinition(CropVariantGeneratorFactory::class)) {
+        if (!$container->hasDefinition(ImageVariantCollection::class)) {
             // If there's no crop variant generator registered to begin with
             return;
         }
-        $cropVariantFactoryDefinition = $container->findDefinition(CropVariantGeneratorFactory::class);
+        $imageVariantCollection = $container->findDefinition(ImageVariantCollection::class);
 
         $unorderedCropVariantServices = $this->collectCropVariantServices($container);
         foreach ($this->orderer->orderByDependencies($unorderedCropVariantServices) as $service) {
-            $cropVariantFactoryDefinition->addArgument($container->findDefinition($service['service']));
+            $imageVariantCollection->addArgument($container->findDefinition($service['service']));
         }
     }
 

@@ -35,6 +35,20 @@ class ImageVariants implements ImageVariantConfigurationInterface
                         allowedAspectRatios: [
                             new Definition\CropVariant\FreeRatio()
                         ],
+                        focusArea: new Definition\CropVariant\Area(
+                            width: 0.19,
+                            height: 0.48,
+                            offsetLeft: 0.23,
+                            offsetTop: 0.42,
+                        ),
+                        coverAreas: [
+                            new Definition\CropVariant\Area(
+                                width: 0.19,
+                                height: 0.48,
+                                offsetLeft: 0.23,
+                                offsetTop: 0.42,
+                            ),
+                        ],
                     ),
                 ],
             )

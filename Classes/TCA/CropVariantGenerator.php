@@ -72,7 +72,7 @@ class CropVariantGenerator
             foreach ($cropVariant->coverAreas as $coverArea) {
                 $coverAreas[] = $this->areaToTca($coverArea);
             }
-            $cropVariantTca['focusArea'] = $coverAreas;
+            $cropVariantTca['coverAreas'] = $coverAreas;
         }
 
         return $cropVariantTca;

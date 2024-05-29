@@ -29,6 +29,14 @@ class CropVariantTcaListenerTest extends FunctionalTestCase
     {
         $actualTca = new TCA(null);
         self::assertSame('Test Label', $actualTca->get('example_table.types.0.columnsOverrides.example_field.config.overrideChildTca.columns.crop.config.cropVariants.test.title'));
+        self::assertSame(0.23, $actualTca->get('example_table.types.0.columnsOverrides.example_field.config.overrideChildTca.columns.crop.config.cropVariants.test.coverAreas.0.x'));
+        self::assertSame(0.42, $actualTca->get('example_table.types.0.columnsOverrides.example_field.config.overrideChildTca.columns.crop.config.cropVariants.test.coverAreas.0.y'));
+        self::assertSame(0.19, $actualTca->get('example_table.types.0.columnsOverrides.example_field.config.overrideChildTca.columns.crop.config.cropVariants.test.coverAreas.0.width'));
+        self::assertSame(0.48, $actualTca->get('example_table.types.0.columnsOverrides.example_field.config.overrideChildTca.columns.crop.config.cropVariants.test.coverAreas.0.height'));
+        self::assertSame(0.23, $actualTca->get('example_table.types.0.columnsOverrides.example_field.config.overrideChildTca.columns.crop.config.cropVariants.test.focusArea.x'));
+        self::assertSame(0.42, $actualTca->get('example_table.types.0.columnsOverrides.example_field.config.overrideChildTca.columns.crop.config.cropVariants.test.focusArea.y'));
+        self::assertSame(0.19, $actualTca->get('example_table.types.0.columnsOverrides.example_field.config.overrideChildTca.columns.crop.config.cropVariants.test.focusArea.width'));
+        self::assertSame(0.48, $actualTca->get('example_table.types.0.columnsOverrides.example_field.config.overrideChildTca.columns.crop.config.cropVariants.test.focusArea.height'));
     }
 
     #[Test]

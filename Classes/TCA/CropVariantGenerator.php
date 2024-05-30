@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Helhum\TopImage\TCA;
 
+use Helhum\TopImage\Definition\ContentField;
 use Helhum\TopImage\Definition\CropVariant;
 use Helhum\TopImage\Definition\CropVariant\Area;
 use Helhum\TopImage\Definition\CropVariant\Ratio;
@@ -22,27 +23,39 @@ class CropVariantGenerator
     public function createTca(TCA $tca): TCA
     {
         foreach ($this->imageVariants as $imageVariant) {
-            $typesPath = sprintf('%s.types', $imageVariant->appliesTo->table);
-            $types = $tca->get(
-                $typesPath,
-                null,
-            );
-            if (!is_array($types)) {
+            if ($imageVariant->cropVariants === null) {
                 continue;
             }
-            foreach ($types as $type => $_) {
-                if ($imageVariant->cropVariants === null) {
-                    continue;
-                }
-                if ($imageVariant->appliesTo->type !== null && $imageVariant->appliesTo->type !== (string)$type) {
-                    continue;
-                }
-                foreach ($imageVariant->cropVariants as $cropVariant) {
-                    $tca = $tca->set(
-                        sprintf('%s.%s.columnsOverrides.%s.config.overrideChildTca.columns.crop.config.cropVariants.%s', $typesPath, $type, $imageVariant->appliesTo->field, $cropVariant->id),
-                        $this->cropVariantToTca($cropVariant)
-                    );
-                }
+            foreach ($imageVariant->appliesTo as $contentField) {
+                $tca = $this->applyToTca($imageVariant->cropVariants, $contentField, $tca);
+            }
+        }
+
+        return $tca;
+    }
+
+    /**
+     * @param CropVariant[] $cropVariants
+     */
+    private function applyToTca(array $cropVariants, ContentField $contentField, TCA $tca): TCA
+    {
+        $typesPath = sprintf('%s.types', $contentField->table);
+        $types = $tca->get(
+            $typesPath,
+            null,
+        );
+        if (!is_array($types)) {
+            return $tca;
+        }
+        foreach ($types as $type => $_) {
+            if ($contentField->type !== null && $contentField->type !== (string)$type) {
+                continue;
+            }
+            foreach ($cropVariants as $cropVariant) {
+                $tca = $tca->set(
+                    sprintf('%s.%s.columnsOverrides.%s.config.overrideChildTca.columns.crop.config.cropVariants.%s', $typesPath, $type, $contentField->field, $cropVariant->id),
+                    $this->cropVariantToTca($cropVariant)
+                );
             }
         }
 

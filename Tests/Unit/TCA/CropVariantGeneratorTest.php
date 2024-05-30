@@ -20,10 +20,12 @@ class CropVariantGeneratorTest extends TestCase
             [
                 new ImageVariant(
                     id: 'test',
-                    appliesTo: new ContentField(
-                        table: 'example_table',
-                        field: 'example_field',
-                    ),
+                    appliesTo: [
+                        new ContentField(
+                            table: 'example_table',
+                            field: 'example_field',
+                        )
+                    ],
                     cropVariants: [
                         new CropVariant(
                             'test',
@@ -74,11 +76,13 @@ class CropVariantGeneratorTest extends TestCase
             [
                 new ImageVariant(
                     id: 'test',
-                    appliesTo: new ContentField(
-                        table: 'example_table',
-                        field: 'example_field',
-                        type: '0',
-                    ),
+                    appliesTo: [
+                        new ContentField(
+                            table: 'example_table',
+                            field: 'example_field',
+                            type: '0',
+                        )
+                    ],
                     cropVariants: [
                         new CropVariant(
                             'test',
@@ -133,10 +137,12 @@ class CropVariantGeneratorTest extends TestCase
             [
                 new ImageVariant(
                     id: 'test',
-                    appliesTo: new ContentField(
-                        table: 'example_table',
-                        field: 'example_field',
-                    ),
+                    appliesTo: [
+                        new ContentField(
+                            table: 'example_table',
+                            field: 'example_field',
+                        )
+                    ],
                     cropVariants: [
                         new CropVariant(
                             'test',

@@ -70,11 +70,13 @@ class PictureTagTest extends FunctionalTestCase
         $fileReference = $this->createFileReference();
         $imageVariant = new ImageVariant(
             id: 'test',
-            appliesTo: new ContentField(
-                'tt_content',
-                'image',
-                'image',
-            ),
+            appliesTo: [
+                new ContentField(
+                    table: 'tt_content',
+                    field: 'image',
+                    type: 'image',
+                )
+            ],
             sources: [
                 new ImageSource(
                     widths: [300],
@@ -98,11 +100,13 @@ class PictureTagTest extends FunctionalTestCase
 
         $imageVariant = new ImageVariant(
             id: 'test',
-            appliesTo: new ContentField(
-                'tt_content',
-                'image',
-                'image',
-            ),
+            appliesTo: [
+                new ContentField(
+                    table: 'tt_content',
+                    field: 'image',
+                    type: 'image',
+                )
+            ],
             sources: [
                 new ImageSource(
                     widths: [300, 600],
@@ -164,11 +168,13 @@ class PictureTagTest extends FunctionalTestCase
 
         $imageVariant = new ImageVariant(
             id: 'test',
-            appliesTo: new ContentField(
-                'tt_content',
-                'image',
-                'image',
-            ),
+            appliesTo: [
+                new ContentField(
+                    table: 'tt_content',
+                    field: 'image',
+                    type: 'image',
+                )
+            ],
             sources: [
                 new ImageSource(
                     widths: [300, 600],

@@ -21,12 +21,13 @@ class ImageVariant
     //    private readonly Set $sourcesSet;
 
     /**
+     * @param ContentField[] $appliesTo
      * @param ImageSource[]|null $sources
      * @param CropVariant[]|null $cropVariants
      */
     public function __construct(
         public readonly string $id,
-        public readonly ContentField $appliesTo,
+        public readonly array $appliesTo,
         public readonly ?array $sources = null,
         public readonly ?FallbackSource $fallbackSource = null,
         public readonly ?array $cropVariants = null,
@@ -36,6 +37,20 @@ class ImageVariant
             throw new InvalidDefinitionException(sprintf('Invalid crop variant "%s" defined in fallback source', $this->fallbackSource->cropVariant), 1716650213);
         }
         $sourcesSet = $this->createSourcesSet($this->sources);
+    }
+
+    /**
+     * @param ContentField[] $contentFields
+     */
+    public function applyTo(array $contentFields): self
+    {
+        return new self(
+            $this->id,
+            array_merge($this->appliesTo, $contentFields),
+            $this->sources,
+            $this->fallbackSource,
+            $this->cropVariants,
+        );
     }
 
     /**

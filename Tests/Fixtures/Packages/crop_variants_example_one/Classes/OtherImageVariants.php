@@ -11,33 +11,50 @@ class OtherImageVariants implements ImageVariantConfigurationInterface
     public function getImageVariantDefinitions(): array
     {
         return [
-            new Definition\ImageVariant(
-                id: 'otherExample',
-                appliesTo: new Definition\ContentField(
-                    table: 'other_example_table',
-                    field: 'other_example_field',
-                ),
+            (new Definition\ImageVariant(
+                id: 'other-example',
+                appliesTo: [
+                    new Definition\ContentField(
+                        table: 'other_example_table',
+                        field: 'other_example_field',
+                    ),
+                    new Definition\ContentField(
+                        table: 'tt_content',
+                        field: 'image',
+                        type: 'image',
+                    ),
+                ],
                 cropVariants: [
                     new Definition\CropVariant(
-                        id: 'other_test',
+                        id: 'other-test',
                         title: 'Other Test Label',
                         allowedAspectRatios: [
                             new Definition\CropVariant\FreeRatio()
                         ],
                     ),
                 ],
+            ))->applyTo(
+                [
+                    new Definition\ContentField(
+                        table: 'tt_content',
+                        field: 'media',
+                        type: 'textmedia',
+                    )
+                ]
             ),
             new Definition\ImageVariant(
                 id: 'content',
-                appliesTo: new Definition\ContentField(
-                    table: 'tt_content',
-                    field: 'image',
-                    type: 'image',
-                ),
+                appliesTo: [
+                    new Definition\ContentField(
+                        table: 'tt_content',
+                        field: 'image',
+                        type: 'image',
+                    )
+                ],
                 cropVariants: [
                     new Definition\CropVariant(
-                        id: 'image_test',
-                        title: 'Image Test',
+                        id: 'image-test',
+                        title: 'Image Test Label',
                         allowedAspectRatios: [
                             new Definition\CropVariant\FreeRatio()
                         ],
@@ -46,15 +63,17 @@ class OtherImageVariants implements ImageVariantConfigurationInterface
             ),
             new Definition\ImageVariant(
                 id: 'other-content',
-                appliesTo: new Definition\ContentField(
-                    table: 'tt_content',
-                    field: 'image',
-                    type: 'image',
-                ),
+                appliesTo: [
+                    new Definition\ContentField(
+                        table: 'tt_content',
+                        field: 'image',
+                        type: 'image',
+                    )
+                ],
                 cropVariants: [
                     new Definition\CropVariant(
-                        id: 'other_image',
-                        title: 'Other Image Test',
+                        id: 'duplicate-variant',
+                        title: 'Duplicate Variant Test Label',
                         allowedAspectRatios: [
                             new Definition\CropVariant\FreeRatio()
                         ],
@@ -62,16 +81,18 @@ class OtherImageVariants implements ImageVariantConfigurationInterface
                 ],
             ),
             new Definition\ImageVariant(
-                id: 'other-content2',
-                appliesTo: new Definition\ContentField(
-                    table: 'tt_content',
-                    field: 'image',
-                    type: 'image',
-                ),
+                id: 'yet-another-content',
+                appliesTo: [
+                    new Definition\ContentField(
+                        table: 'tt_content',
+                        field: 'image',
+                        type: 'image',
+                    )
+                ],
                 cropVariants: [
                     new Definition\CropVariant(
-                        id: 'other_image',
-                        title: 'Other Image Test',
+                        id: 'duplicate-variant',
+                        title: 'Duplicate Variant Test Label',
                         allowedAspectRatios: [
                             new Definition\CropVariant\FreeRatio()
                         ],

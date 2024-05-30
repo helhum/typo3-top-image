@@ -18,10 +18,12 @@ class ImageVariantTest extends TestCase
         $this->expectException(InvalidDefinitionException::class);
         $imageVariant = new ImageVariant(
             id: 'test',
-            appliesTo: new ContentField(
-                table: 'test',
-                field: 'test',
-            ),
+            appliesTo: [
+                new ContentField(
+                    table: 'test',
+                    field: 'test',
+                )
+            ],
             sources: [
                 new ImageSource(
                     widths: [500],

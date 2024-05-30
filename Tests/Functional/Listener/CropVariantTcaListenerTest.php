@@ -43,7 +43,11 @@ class CropVariantTcaListenerTest extends FunctionalTestCase
     public function tcaForOtherExampleIsProperlyExposed(): void
     {
         $actualTca = new TCA(null);
-        self::assertSame('Other Test Label', $actualTca->get('other_example_table.types.one.columnsOverrides.other_example_field.config.overrideChildTca.columns.crop.config.cropVariants.other_test.title'));
-        self::assertSame('Other Test Label', $actualTca->get('other_example_table.types.two.columnsOverrides.other_example_field.config.overrideChildTca.columns.crop.config.cropVariants.other_test.title'));
+        self::assertSame('Other Test Label', $actualTca->get('other_example_table.types.two.columnsOverrides.other_example_field.config.overrideChildTca.columns.crop.config.cropVariants.other-test.title'));
+        self::assertSame('Other Test Label', $actualTca->get('tt_content.types.image.columnsOverrides.image.config.overrideChildTca.columns.crop.config.cropVariants.other-test.title'));
+        self::assertSame('Other Test Label', $actualTca->get('tt_content.types.image.columnsOverrides.image.config.overrideChildTca.columns.crop.config.cropVariants.other-test.title'));
+        self::assertSame('Other Test Label', $actualTca->get('tt_content.types.textmedia.columnsOverrides.media.config.overrideChildTca.columns.crop.config.cropVariants.other-test.title'));
+        self::assertSame('Image Test Label', $actualTca->get('tt_content.types.image.columnsOverrides.image.config.overrideChildTca.columns.crop.config.cropVariants.image-test.title'));
+        self::assertSame('Duplicate Variant Test Label', $actualTca->get('tt_content.types.image.columnsOverrides.image.config.overrideChildTca.columns.crop.config.cropVariants.duplicate-variant.title'));
     }
 }

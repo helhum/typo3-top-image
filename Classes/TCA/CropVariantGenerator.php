@@ -9,6 +9,7 @@ use Helhum\TopImage\Definition\CropVariant;
 use Helhum\TopImage\Definition\CropVariant\Area;
 use Helhum\TopImage\Definition\CropVariant\Ratio;
 use Helhum\TopImage\Definition\ImageVariant;
+use Helhum\TopImage\Definition\InvalidDefinitionException;
 use Helhum\TopImage\Definition\TCA;
 
 class CropVariantGenerator
@@ -45,7 +46,16 @@ class CropVariantGenerator
             null,
         );
         if (!is_array($types)) {
-            return $tca;
+            throw new InvalidDefinitionException(sprintf('No types defined in table "%s". Misspelled the table name?', $contentField->table), 1717068570);
+        }
+        if ($tca->get(sprintf('%s.columns.%s', $contentField->table, $contentField->field), null) === null) {
+            throw new InvalidDefinitionException(sprintf('Field "%s" does not exist in table "%s"', $contentField->field, $contentField->table), 1717068783);
+        }
+        if (
+            $contentField->type !== null
+            && $tca->get($typesPath . '.' . $contentField->type, null) === null
+        ) {
+            throw new InvalidDefinitionException(sprintf('Type "%s" does not exist in table "%s"', $contentField->type, $contentField->table), 1717067840);
         }
         foreach ($types as $type => $_) {
             if ($contentField->type !== null && $contentField->type !== (string)$type) {

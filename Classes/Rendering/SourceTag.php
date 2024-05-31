@@ -24,8 +24,11 @@ class SourceTag
             forFile: $this->fileReference,
             cropVariant: $this->source->artDirection?->cropVariant,
         );
+        $renderedImages = [];
         foreach ($this->source->widths as $width) {
-            $srcsetDefinitions[] = sprintf('%s %dw', $processing->forWidth($width)->execute()->getPublicUrl(), $width);
+            $renderedImage = $processing->forWidth($width)->execute();
+            $renderedImages[$width] = $renderedImage;
+            $srcsetDefinitions[] = sprintf('%s %dw', $renderedImage->getPublicUrl(), $width);
         }
         $sourceTag->addAttribute('srcset', implode(', ', $srcsetDefinitions));
         if ($this->source->sizes !== null) {
@@ -34,6 +37,8 @@ class SourceTag
         if ($this->source->artDirection?->media !== null) {
             $sourceTag->addAttribute('media', $this->source->artDirection->media);
         }
+        $sourceTag->addAttribute('width', $renderedImages[array_key_first($renderedImages)]->getProperty('width'));
+        $sourceTag->addAttribute('height', $renderedImages[array_key_first($renderedImages)]->getProperty('height'));
 
         return $sourceTag;
     }

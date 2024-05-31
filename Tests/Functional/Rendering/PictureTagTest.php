@@ -89,7 +89,7 @@ class PictureTagTest extends FunctionalTestCase
             fileReference: $fileReference,
             additionalTagAttributes: ['class' => 'module_image'],
         );
-        self::assertSame(sprintf('<picture><source srcset="%1$s 300w" /><img src="%1$s" width="300" height="200" class="module_image" /></picture>', $this->processExpectedFile($fileReference, 300)->getPublicUrl()), $pictureTag->build()->render());
+        self::assertSame(sprintf('<picture><source srcset="%1$s 300w" width="300" height="200" /><img src="%1$s" width="300" height="200" class="module_image" /></picture>', $this->processExpectedFile($fileReference, 300)->getPublicUrl()), $pictureTag->build()->render());
     }
 
     #[Test]
@@ -148,7 +148,7 @@ class PictureTagTest extends FunctionalTestCase
 
         self::assertSame(
             sprintf(
-                '<picture><source srcset="%1$s 300w, %2$s 600w" sizes="(min-width: 760px) 50vw, 100vw" media="(max-width: 2048px)" /><source srcset="%3$s 1100w" /><img src="%3$s" width="1100" height="857" /></picture>',
+                '<picture><source srcset="%1$s 300w, %2$s 600w" sizes="(min-width: 760px) 50vw, 100vw" media="(max-width: 2048px)" width="300" height="234" /><source srcset="%3$s 1100w" width="1100" height="857" /><img src="%3$s" width="1100" height="857" /></picture>',
                 $this->processExpectedFile($fileReference, 300, $cropVariant)->getPublicUrl(),
                 $this->processExpectedFile($fileReference, 600, $cropVariant)->getPublicUrl(),
                 $this->processExpectedFile($fileReference, 1100, $cropVariant)->getPublicUrl(),
@@ -220,7 +220,7 @@ class PictureTagTest extends FunctionalTestCase
 
         self::assertSame(
             sprintf(
-                '<picture><source srcset="%1$s 300w, %2$s 600w" sizes="(min-width: 760px) 50vw, 100vw" media="(max-width: 2048px)" /><source srcset="%3$s 1100w" /><img src="%1$s" width="300" height="234" alt="alt of image" title="title of image" /></picture>',
+                '<picture><source srcset="%1$s 300w, %2$s 600w" sizes="(min-width: 760px) 50vw, 100vw" media="(max-width: 2048px)" width="300" height="234" /><source srcset="%3$s 1100w" width="1100" height="857" /><img src="%1$s" width="300" height="234" alt="alt of image" title="title of image" /></picture>',
                 $this->processExpectedFile($fileReference, 300, $cropVariant)->getPublicUrl(),
                 $this->processExpectedFile($fileReference, 600, $cropVariant)->getPublicUrl(),
                 $this->processExpectedFile($fileReference, 1100, $cropVariant)->getPublicUrl(),

@@ -6,7 +6,6 @@ namespace Helhum\TopImage\Rendering;
 
 use Helhum\TopImage\Definition\ImageSource;
 use TYPO3\CMS\Core\Resource\FileReference;
-use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 class SourceTag
 {
@@ -16,9 +15,9 @@ class SourceTag
     ) {
     }
 
-    public function build(): TagBuilder
+    public function build(): Tag
     {
-        $sourceTag = new TagBuilder('source');
+        $sourceTag = new Tag('source');
         $srcsetDefinitions = [];
         $processing = new ProcessingInstructions(
             forFile: $this->fileReference,
@@ -37,8 +36,8 @@ class SourceTag
         if ($this->source->artDirection?->media !== null) {
             $sourceTag->addAttribute('media', $this->source->artDirection->media);
         }
-        $sourceTag->addAttribute('width', $renderedImages[array_key_first($renderedImages)]->getProperty('width'));
-        $sourceTag->addAttribute('height', $renderedImages[array_key_first($renderedImages)]->getProperty('height'));
+        $sourceTag->addAttribute('width', (string)$renderedImages[array_key_first($renderedImages)]->getProperty('width'));
+        $sourceTag->addAttribute('height', (string)$renderedImages[array_key_first($renderedImages)]->getProperty('height'));
 
         return $sourceTag;
     }

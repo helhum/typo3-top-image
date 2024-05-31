@@ -6,7 +6,6 @@ namespace Helhum\TopImage\Rendering;
 
 use Helhum\TopImage\Definition\ImageSource\FallbackSource;
 use TYPO3\CMS\Core\Resource\FileReference;
-use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 class ImgTag
 {
@@ -16,24 +15,23 @@ class ImgTag
     ) {
     }
 
-    public function build(): TagBuilder
+    public function build(): Tag
     {
-        $imgTag = new TagBuilder('img');
-        $imgTag->ignoreEmptyAttributes(true);
+        $imgTag = new Tag('img');
         $processing = new ProcessingInstructions(
             forFile: $this->fileReference,
             width: $this->source->width,
             cropVariant: $this->source->cropVariant,
         );
         $image = $processing->execute();
-        $imgTag->addAttribute('src', $image->getPublicUrl());
-        $imgTag->addAttribute('width', $image->getProperty('width'));
-        $imgTag->addAttribute('height', $image->getProperty('height'));
+        $imgTag->addAttribute('src', (string)$image->getPublicUrl());
+        $imgTag->addAttribute('width', (string)$image->getProperty('width'));
+        $imgTag->addAttribute('height', (string)$image->getProperty('height'));
         if ($this->fileReference->hasProperty('alternative')) {
-            $imgTag->addAttribute('alt', $this->fileReference->getProperty('alternative'));
+            $imgTag->addAttribute('alt', (string)$this->fileReference->getProperty('alternative'));
         }
         if ($this->fileReference->hasProperty('title')) {
-            $imgTag->addAttribute('title', $this->fileReference->getProperty('title'));
+            $imgTag->addAttribute('title', (string)$this->fileReference->getProperty('title'));
         }
 
         return $imgTag;

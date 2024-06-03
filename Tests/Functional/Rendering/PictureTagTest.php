@@ -8,6 +8,7 @@ use Helhum\TopImage\Definition\CropVariant;
 use Helhum\TopImage\Definition\ImageSource;
 use Helhum\TopImage\Definition\ImageVariant;
 use Helhum\TopImage\Rendering\PictureTag;
+use Helhum\TopImage\Rendering\RenderedImage\Identifier;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
@@ -90,6 +91,36 @@ class PictureTagTest extends FunctionalTestCase
             additionalTagAttributes: ['class' => 'module_image'],
         );
         self::assertSame(sprintf('<picture><source srcset="%1$s 300w" width="300" height="200" /><img src="%1$s" width="300" height="200" class="module_image" /></picture>', $this->processExpectedFile($fileReference, 300)->getPublicUrl()), $pictureTag->build()->render());
+    }
+
+    #[Test]
+    public function fetchingRenderedImagesFromResultReturnsProcessedFileOfCorrectSize(): void
+    {
+        $fileReference = $this->createFileReference();
+        $source = new ImageSource(
+            widths: [300],
+        );
+        $imageVariant = new ImageVariant(
+            id: 'test',
+            appliesTo: [
+                new ContentField(
+                    table: 'tt_content',
+                    field: 'image',
+                    type: 'image',
+                )
+            ],
+            sources: [
+                $source,
+            ],
+        );
+
+        $pictureTag = new PictureTag(
+            imageVariant: $imageVariant,
+            fileReference: $fileReference,
+            additionalTagAttributes: ['class' => 'module_image'],
+        );
+        $builtTag = $pictureTag->build();
+        self::assertSame(300, $builtTag->renderedImages->get(new Identifier(source: $source, width: 300))->getProperty('width'));
     }
 
     #[Test]

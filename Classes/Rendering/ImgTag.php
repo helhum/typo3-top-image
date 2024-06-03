@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Helhum\TopImage\Rendering;
 
 use Helhum\TopImage\Definition\ImageSource\FallbackSource;
+use Helhum\TopImage\Rendering\RenderedImage\Identifier;
 use TYPO3\CMS\Core\Resource\FileReference;
 
 class ImgTag
@@ -17,13 +18,18 @@ class ImgTag
 
     public function build(): Tag
     {
-        $imgTag = new Tag('img');
         $processing = new ProcessingInstructions(
             forFile: $this->fileReference,
             width: $this->source->width,
             cropVariant: $this->source->cropVariant,
         );
         $image = $processing->execute();
+        $renderedImages = new RenderedImages();
+        $renderedImages = $renderedImages->add(Identifier::fromFallbackSource($this->source), $image);
+        $imgTag = new Tag(
+            'img',
+            $renderedImages,
+        );
         $imgTag->addAttribute('src', (string)$image->getPublicUrl());
         $imgTag->addAttribute('width', (string)$image->getProperty('width'));
         $imgTag->addAttribute('height', (string)$image->getProperty('height'));

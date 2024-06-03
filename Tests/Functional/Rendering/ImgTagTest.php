@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Functional\Rendering;
 
 use Helhum\TopImage\Definition\ImageSource;
+use Helhum\TopImage\Rendering\ImgTag;
 use Helhum\TopImage\Rendering\RenderedImage\Identifier;
-use Helhum\TopImage\Rendering\SourceTag;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
@@ -19,7 +19,7 @@ use TYPO3\CMS\Core\Resource\StorageRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
-class SourceTagTest extends FunctionalTestCase
+class ImgTagTest extends FunctionalTestCase
 {
     private const cropVariants = '{
       "image_test": {
@@ -66,60 +66,30 @@ class SourceTagTest extends FunctionalTestCase
     public function fetchingRenderedImagesFromResultReturnsProcessedFileOfCorrectSize(): void
     {
         $fileReference = $this->createFileReference();
-        $source = new ImageSource(
-            widths: [300, 600],
+        $fallbackSource = new ImageSource\FallbackSource(
+            width: 300,
         );
-        $sourceTag = new SourceTag(
-            source: $source,
+        $imgTag = new ImgTag(
+            source: $fallbackSource,
             fileReference: $fileReference,
         );
-        $builtTag = $sourceTag->build();
-        $processedFile = $builtTag->renderedImages->get(new Identifier(source: $source, width: 300));
+        $builtTag = $imgTag->build();
+        $processedFile = $builtTag->renderedImages->get(Identifier::fromFallbackSource($fallbackSource));
         self::assertSame(300, $processedFile->getProperty('width'));
         self::assertSame(200, $processedFile->getProperty('height'));
-        $processedFile = $builtTag->renderedImages->get(new Identifier(source: $source, width: 600));
-        self::assertSame(600, $processedFile->getProperty('width'));
-        self::assertSame(400, $processedFile->getProperty('height'));
     }
 
     #[Test]
-    public function sourceFileWithSingleWidth(): void
+    public function imgTagRenderedAsExpected(): void
     {
         $fileReference = $this->createFileReference();
-        $sourceTag = new SourceTag(
-            source: new ImageSource(
-                widths: [300],
+        $imgTag = new ImgTag(
+            source: new ImageSource\FallbackSource(
+                width: 300,
             ),
             fileReference: $fileReference,
         );
-        self::assertSame(sprintf('<source srcset="%s 300w" width="300" height="200" />', $this->processExpectedFile($fileReference, 300)->getPublicUrl()), $sourceTag->build()->render());
-    }
-
-    #[Test]
-    public function sourceFileWithMultipleWidthsAndSizes(): void
-    {
-        $fileReference = $this->createFileReference();
-        $cropVariant = 'image_test';
-        $sourceTag = new SourceTag(
-            source: new ImageSource(
-                widths: [300, 600, 1200],
-                sizes: ['(min-width: 760px) 50vw', '100vw'],
-                artDirection: new ImageSource\ArtDirection(
-                    cropVariant: $cropVariant,
-                    media: '(max-width: 2048px)'
-                ),
-            ),
-            fileReference: $fileReference,
-        );
-        self::assertSame(
-            sprintf(
-                '<source srcset="%s 300w, %s 600w, %s 1200w" sizes="(min-width: 760px) 50vw, 100vw" media="(max-width: 2048px)" width="300" height="234" />',
-                $this->processExpectedFile($fileReference, 300, $cropVariant)->getPublicUrl(),
-                $this->processExpectedFile($fileReference, 600, $cropVariant)->getPublicUrl(),
-                $this->processExpectedFile($fileReference, 1200, $cropVariant)->getPublicUrl(),
-            ),
-            $sourceTag->build()->render(),
-        );
+        self::assertSame(sprintf('<img src="%s" width="300" height="200" />', $this->processExpectedFile($fileReference, 300)->getPublicUrl()), $imgTag->build()->render());
     }
 
     private function createFileReference(): FileReference

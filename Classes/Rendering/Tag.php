@@ -12,6 +12,7 @@ final class Tag
 
     public function __construct(
         string $tagName,
+        public readonly RenderedImages $renderedImages,
     ) {
         $this->tagBuilder = new TagBuilder($tagName);
         $this->tagBuilder->ignoreEmptyAttributes(true);

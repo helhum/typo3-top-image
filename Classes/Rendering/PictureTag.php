@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Helhum\TopImage\Rendering;
 
+use Ds\Map;
 use Helhum\TopImage\Definition\ImageSource\FallbackSource;
 use Helhum\TopImage\Definition\ImageVariant;
 use TYPO3\CMS\Core\Resource\FileReference;
@@ -25,10 +26,12 @@ class PictureTag
         if ($this->imageVariant->sources === null) {
             throw new RenderingException(sprintf('Can not render a picture tag for image variant %s because it has no sources defined', $this->imageVariant->id), 1716591424);
         }
-        $pictureTag = new Tag('picture');
         $tagContent = '';
+        $renderedImages = new RenderedImages(new Map());
         foreach ($this->imageVariant->sources as $source) {
-            $tagContent .= (new SourceTag(source: $source, fileReference: $this->fileReference))->build()->render();
+            $sourceTag = (new SourceTag(source: $source, fileReference: $this->fileReference))->build();
+            $renderedImages = $renderedImages->merge($sourceTag->renderedImages);
+            $tagContent .= $sourceTag->render();
         }
         $fallbackSource = $this->imageVariant->fallbackSource;
         if ($fallbackSource === null) {
@@ -43,6 +46,7 @@ class PictureTag
             $imageTag->addAttribute($name, $value);
         }
         $tagContent .= $imageTag->render();
+        $pictureTag = new Tag('picture', $renderedImages);
         $pictureTag->setContent($tagContent);
 
         return $pictureTag;

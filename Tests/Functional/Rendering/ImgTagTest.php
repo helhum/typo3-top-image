@@ -89,7 +89,7 @@ class ImgTagTest extends FunctionalTestCase
             ),
             fileReference: $fileReference,
         );
-        self::assertSame(sprintf('<img src="%s" width="300" height="200" />', $this->processExpectedFile($fileReference, 300)->getPublicUrl()), $imgTag->build()->render());
+        self::assertSame(sprintf('<img src="%s" width="300" height="200" alt="" />', $this->processExpectedFile($fileReference, 300)->getPublicUrl()), $imgTag->build()->render());
     }
 
     private function createFileReference(): FileReference

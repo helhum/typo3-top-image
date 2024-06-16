@@ -15,7 +15,6 @@ final class Tag
         public readonly RenderedImages $renderedImages,
     ) {
         $this->tagBuilder = new TagBuilder($tagName);
-        $this->tagBuilder->ignoreEmptyAttributes(true);
     }
 
     public function render(): string
@@ -25,6 +24,9 @@ final class Tag
 
     public function addAttribute(string $name, string $value): self
     {
+        if ($value === '' && $name !== 'alt') {
+            return $this;
+        }
         $this->tagBuilder->addAttribute($name, $value);
         return $this;
     }

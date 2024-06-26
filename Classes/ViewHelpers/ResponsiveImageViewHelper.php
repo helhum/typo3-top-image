@@ -10,7 +10,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 class ResponsiveImageViewHelper extends AbstractTagBasedViewHelper
 {
-    public function __construct(private ImageVariantCollection $imageVariantCollection)
+    public function __construct(private readonly ImageVariantCollection $imageVariantCollection)
     {
         parent::__construct();
     }

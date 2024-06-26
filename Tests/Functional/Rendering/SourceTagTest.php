@@ -141,10 +141,9 @@ class SourceTagTest extends FunctionalTestCase
         );
         self::assertSame(
             sprintf(
-                '<source srcset="%s 300w, %s 600w, %s 1142w" media="(max-width: 2048px)" width="300" height="234" />',
+                '<source srcset="%s 300w, %s 600w" media="(max-width: 2048px)" width="300" height="234" />',
                 $this->processExpectedFile($fileReference, 300, $cropVariant)->getPublicUrl(),
                 $this->processExpectedFile($fileReference, 600, $cropVariant)->getPublicUrl(),
-                $this->processExpectedFile($fileReference, 1200, $cropVariant)->getPublicUrl(),
             ),
             $sourceTag->build()->render(),
         );
@@ -186,9 +185,8 @@ class SourceTagTest extends FunctionalTestCase
         );
         self::assertSame(
             sprintf(
-                '<source srcset="%s 300w, %s 310w" width="300" height="235" />',
+                '<source srcset="%s 300w" width="300" height="235" />',
                 $this->processExpectedFile($fileReference, 300)->getPublicUrl(),
-                $this->processExpectedFile($fileReference, 600)->getPublicUrl(),
             ),
             $sourceTag->build()->render(),
         );

@@ -29,9 +29,12 @@ class SourceTag
         $renderedImages = new RenderedImages();
         $widths = $this->source->widths;
         asort($widths, SORT_NUMERIC);
-        foreach ($widths as $width) {
+        foreach (array_values($widths) as $index => $width) {
             $renderedImage = $processing->forWidth($width)->execute();
             $minWidth = min((int)$renderedImage->getProperty('width'), $width);
+            if ($index > 0 && $minWidth !== $width) {
+                break;
+            }
             $renderedImages = $renderedImages->add((new Identifier(source: $this->source, width: $width, format: $this->format)), $renderedImage);
             $srcsetDefinitions[] = sprintf('%s %dw', $renderedImage->getPublicUrl(), $minWidth);
             if ($minWidth !== $width) {

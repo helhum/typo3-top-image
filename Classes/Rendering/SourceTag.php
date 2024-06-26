@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Helhum\TopImage\Rendering;
 
+use Helhum\TopImage\Definition\ImageFormat;
 use Helhum\TopImage\Definition\ImageSource;
 use Helhum\TopImage\Rendering\RenderedImage\Identifier;
 use TYPO3\CMS\Core\Resource\FileReference;
@@ -13,6 +14,7 @@ class SourceTag
     public function __construct(
         private readonly ImageSource $source,
         private readonly FileReference $fileReference,
+        private readonly ?ImageFormat $format = null,
     ) {
     }
 
@@ -22,6 +24,7 @@ class SourceTag
         $processing = new ProcessingInstructions(
             forFile: $this->fileReference,
             cropVariant: $this->source->artDirection?->cropVariant,
+            format: $this->format,
         );
         $renderedImages = new RenderedImages();
         $widths = $this->source->widths;

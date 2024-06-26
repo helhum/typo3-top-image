@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Helhum\TopImage\Rendering;
 
+use Helhum\TopImage\Definition\ImageFormat;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\Area;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
 use TYPO3\CMS\Core\Resource\FileReference;
@@ -15,6 +16,7 @@ class ProcessingInstructions
         private readonly FileReference $forFile,
         private readonly int $width = 320,
         private readonly ?string $cropVariant = null,
+        private readonly ?ImageFormat $format = null,
     ) {
     }
 
@@ -24,6 +26,7 @@ class ProcessingInstructions
             forFile: $this->forFile,
             width: $width,
             cropVariant: $this->cropVariant,
+            format: $this->format,
         );
     }
 
@@ -40,9 +43,15 @@ class ProcessingInstructions
         $cropVariantCollection = CropVariantCollection::create((string)($this->forFile->getProperty('crop') ?? ''));
         $cropVariant = $this->cropVariant ?? 'default';
         $cropArea = $cropVariantCollection->getCropArea($cropVariant);
-        return [
+        $instructions = [
             'maxWidth' => $this->width,
             'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($this->forFile),
         ];
+
+        if ($this->format !== null) {
+            $instructions['fileExtension'] = $this->format->value;
+        }
+
+        return $instructions;
     }
 }

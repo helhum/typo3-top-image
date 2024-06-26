@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Functional\Rendering;
 
+use Helhum\TopImage\Definition\ImageFormat;
 use Helhum\TopImage\Definition\ImageSource;
 use Helhum\TopImage\Rendering\RenderedImage\Identifier;
 use Helhum\TopImage\Rendering\SourceTag;
@@ -51,6 +52,7 @@ class SourceTagTest extends FunctionalTestCase
     protected array $configurationToUseInTestInstance = [
         'GFX' => [
             'processor_path' => '/opt/homebrew/bin/',
+            'imagefile_ext' => 'gif,jpg,jpeg,tif,tiff,bmp,pcx,tga,png,pdf,ai,svg,webp',
         ]
     ];
 
@@ -192,6 +194,73 @@ class SourceTagTest extends FunctionalTestCase
         );
     }
 
+    #[Test]
+    public function formatOfSourceIsKeptWhenNotSpecifiedOtherwise(): void
+    {
+        $fileReference = $this->createFileReference('image1_310.png');
+        $sourceTag = new SourceTag(
+            source: new ImageSource(
+                widths: [300],
+            ),
+            fileReference: $fileReference,
+        );
+        $expectedResult = $this->processExpectedFile($fileReference, 300)->getPublicUrl();
+        self::assertSame(
+            sprintf(
+                '<source srcset="%s 300w" width="300" height="235" />',
+                $expectedResult,
+            ),
+            $sourceTag->build()->render(),
+        );
+        self::assertSame('png', pathinfo((string)$expectedResult, PATHINFO_EXTENSION));
+    }
+
+    #[Test]
+    public function formatOfSourceIsChangedToJpegWhenSpecified(): void
+    {
+        $fileReference = $this->createFileReference('image1_310.png');
+        $imageFormat = ImageFormat::JPG;
+        $sourceTag = new SourceTag(
+            source: new ImageSource(
+                widths: [300],
+            ),
+            fileReference: $fileReference,
+            format: $imageFormat,
+        );
+        $expectedResult = $this->processExpectedFile(fileReference: $fileReference, width: 300, format: $imageFormat)->getPublicUrl();
+        self::assertSame(
+            sprintf(
+                '<source srcset="%s 300w" width="300" height="235" />',
+                $expectedResult,
+            ),
+            $sourceTag->build()->render(),
+        );
+        self::assertSame($imageFormat->value, pathinfo((string)$expectedResult, PATHINFO_EXTENSION));
+    }
+
+    #[Test]
+    public function formatOfSourceIsChangedToWebmWhenSpecified(): void
+    {
+        $fileReference = $this->createFileReference();
+        $imageFormat = ImageFormat::WEBP;
+        $sourceTag = new SourceTag(
+            source: new ImageSource(
+                widths: [300],
+            ),
+            fileReference: $fileReference,
+            format: $imageFormat,
+        );
+        $expectedResult = $this->processExpectedFile(fileReference: $fileReference, width: 300, format: $imageFormat)->getPublicUrl();
+        self::assertSame(
+            sprintf(
+                '<source srcset="%s 300w" width="300" height="200" />',
+                $expectedResult,
+            ),
+            $sourceTag->build()->render(),
+        );
+        self::assertSame($imageFormat->value, pathinfo((string)$expectedResult, PATHINFO_EXTENSION));
+    }
+
     private function createFileReference(string $imageName = 'image1.jpg'): FileReference
     {
         $storage = GeneralUtility::makeInstance(StorageRepository::class)->findByUid(1);
@@ -212,17 +281,21 @@ class SourceTagTest extends FunctionalTestCase
         return GeneralUtility::makeInstance(ResourceFactory::class)->getFileReferenceObject(1);
     }
 
-    private function processExpectedFile(FileReference $fileReference, int $width, string $cropVariant = 'default'): ProcessedFile
+    private function processExpectedFile(FileReference $fileReference, int $width, string $cropVariant = 'default', ?ImageFormat $format = null): ProcessedFile
     {
         $collection = CropVariantCollection::create(self::cropVariants);
         $cropArea = $collection->getCropArea($cropVariant);
+        $processingInstructions = [
+            'maxWidth' => $width,
+            'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($fileReference->getOriginalFile()),
+        ];
+        if ($format !== null) {
+            $processingInstructions['fileExtension'] = $format->value;
+        }
 
         return $fileReference->getOriginalFile()->process(
             ProcessedFile::CONTEXT_IMAGECROPSCALEMASK,
-            [
-                'maxWidth' => $width,
-                'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($fileReference->getOriginalFile()),
-            ]
+            $processingInstructions
         );
     }
 }

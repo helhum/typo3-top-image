@@ -102,7 +102,7 @@ class SourceTagTest extends FunctionalTestCase
         $cropVariant = 'image_test';
         $sourceTag = new SourceTag(
             source: new ImageSource(
-                widths: [300, 600, 1200],
+                widths: [1000, 300, 600],
                 sizes: ['(min-width: 760px) 50vw', '100vw'],
                 artDirection: new ImageSource\ArtDirection(
                     cropVariant: $cropVariant,
@@ -113,7 +113,33 @@ class SourceTagTest extends FunctionalTestCase
         );
         self::assertSame(
             sprintf(
-                '<source srcset="%s 300w, %s 600w, %s 1200w" sizes="(min-width: 760px) 50vw, 100vw" media="(max-width: 2048px)" width="300" height="234" />',
+                '<source srcset="%s 300w, %s 600w, %s 1000w" sizes="(min-width: 760px) 50vw, 100vw" media="(max-width: 2048px)" width="300" height="234" />',
+                $this->processExpectedFile($fileReference, 300, $cropVariant)->getPublicUrl(),
+                $this->processExpectedFile($fileReference, 600, $cropVariant)->getPublicUrl(),
+                $this->processExpectedFile($fileReference, 1000, $cropVariant)->getPublicUrl(),
+            ),
+            $sourceTag->build()->render(),
+        );
+    }
+
+    #[Test]
+    public function sourceFileWithMultipleWidthsSomeTooLarge(): void
+    {
+        $fileReference = $this->createFileReference();
+        $cropVariant = 'image_test';
+        $sourceTag = new SourceTag(
+            source: new ImageSource(
+                widths: [1200, 600, 300],
+                artDirection: new ImageSource\ArtDirection(
+                    cropVariant: $cropVariant,
+                    media: '(max-width: 2048px)'
+                ),
+            ),
+            fileReference: $fileReference,
+        );
+        self::assertSame(
+            sprintf(
+                '<source srcset="%s 300w, %s 600w, %s 1142w" media="(max-width: 2048px)" width="300" height="234" />',
                 $this->processExpectedFile($fileReference, 300, $cropVariant)->getPublicUrl(),
                 $this->processExpectedFile($fileReference, 600, $cropVariant)->getPublicUrl(),
                 $this->processExpectedFile($fileReference, 1200, $cropVariant)->getPublicUrl(),
@@ -122,11 +148,55 @@ class SourceTagTest extends FunctionalTestCase
         );
     }
 
-    private function createFileReference(): FileReference
+    #[Test]
+    public function sourceFileWithAllTooLargeWidths(): void
+    {
+        $fileReference = $this->createFileReference();
+        $cropVariant = 'image_test';
+        $sourceTag = new SourceTag(
+            source: new ImageSource(
+                widths: [2000, 4000],
+                artDirection: new ImageSource\ArtDirection(
+                    cropVariant: $cropVariant,
+                    media: '(min-width: 2000px)'
+                ),
+            ),
+            fileReference: $fileReference,
+        );
+        self::assertSame(
+            sprintf(
+                '<source srcset="%s 1142w" media="(min-width: 2000px)" width="1142" height="889" />',
+                $this->processExpectedFile($fileReference, 2000, $cropVariant)->getPublicUrl(),
+            ),
+            $sourceTag->build()->render(),
+        );
+    }
+
+    #[Test]
+    public function sourceFileWithOneOkAndMultipleTooLargeWidths(): void
+    {
+        $fileReference = $this->createFileReference('image1_310.jpg');
+        $sourceTag = new SourceTag(
+            source: new ImageSource(
+                widths: [300, 600, 900, 1200],
+            ),
+            fileReference: $fileReference,
+        );
+        self::assertSame(
+            sprintf(
+                '<source srcset="%s 300w, %s 310w" width="300" height="235" />',
+                $this->processExpectedFile($fileReference, 300)->getPublicUrl(),
+                $this->processExpectedFile($fileReference, 600)->getPublicUrl(),
+            ),
+            $sourceTag->build()->render(),
+        );
+    }
+
+    private function createFileReference(string $imageName = 'image1.jpg'): FileReference
     {
         $storage = GeneralUtility::makeInstance(StorageRepository::class)->findByUid(1);
         self::assertInstanceOf(ResourceStorage::class, $storage);
-        $file = $storage->addFile(localFilePath: __DIR__ . '/../../Fixtures/Files/image1.jpg', targetFolder: $storage->getRootLevelFolder(), removeOriginal: false);
+        $file = $storage->addFile(localFilePath: __DIR__ . '/../../Fixtures/Files/' . $imageName, targetFolder: $storage->getRootLevelFolder(), removeOriginal: false);
         self::assertInstanceOf(File::class, $file);
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('sys_file_reference');
         $connection->insert(

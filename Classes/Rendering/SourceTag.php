@@ -49,6 +49,9 @@ class SourceTag
         if ($this->source->artDirection?->media !== null) {
             $sourceTag->addAttribute('media', $this->source->artDirection->media);
         }
+        if ($this->format?->needsTypeAttribute() === true) {
+            $sourceTag->addAttribute('type', $this->format->mimeType());
+        }
         $sourceTag->addAttribute('width', (string)$renderedImages->first()->getProperty('width'));
         $sourceTag->addAttribute('height', (string)$renderedImages->first()->getProperty('height'));
 

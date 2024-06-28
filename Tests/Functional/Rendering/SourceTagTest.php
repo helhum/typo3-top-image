@@ -253,7 +253,7 @@ class SourceTagTest extends FunctionalTestCase
         $expectedResult = $this->processExpectedFile(fileReference: $fileReference, width: 300, format: $imageFormat)->getPublicUrl();
         self::assertSame(
             sprintf(
-                '<source srcset="%s 300w" width="300" height="200" />',
+                '<source srcset="%s 300w" type="image/webp" width="300" height="200" />',
                 $expectedResult,
             ),
             $sourceTag->build()->render(),

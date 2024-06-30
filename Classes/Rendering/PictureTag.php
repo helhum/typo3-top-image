@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Helhum\TopImage\Rendering;
 
 use Ds\Map;
+use Helhum\TopImage\Definition\ImageFormat;
 use Helhum\TopImage\Definition\ImageSource\FallbackSource;
 use Helhum\TopImage\Definition\ImageVariant;
+use Helhum\TopImage\Rendering\RenderedImage\Identifier;
 use TYPO3\CMS\Core\Resource\FileReference;
 
 class PictureTag
@@ -29,9 +31,21 @@ class PictureTag
         $tagContent = '';
         $renderedImages = new RenderedImages(new Map());
         foreach ($this->imageVariant->sources as $source) {
-            $sourceTag = (new SourceTag(source: $source, fileReference: $this->fileReference))->build();
-            $renderedImages = $renderedImages->merge($sourceTag->renderedImages);
-            $tagContent .= $sourceTag->render();
+            $targetFormats = $this->imageVariant->targetFormats ?? [null];
+            $webpSource = null;
+            foreach ($targetFormats as $targetFormat) {
+                $sourceTag = (new SourceTag(source: $source, fileReference: $this->fileReference, format: $targetFormat))->build();
+                if ($webpSource === null && $targetFormat === ImageFormat::WEBP) {
+                    $webpSource = $sourceTag;
+                    continue;
+                }
+                if ($webpSource !== null && !$this->hasLargerFiles($webpSource, $sourceTag)) {
+                    $renderedImages = $renderedImages->merge($webpSource->renderedImages);
+                    $tagContent .= $webpSource->render();
+                }
+                $renderedImages = $renderedImages->merge($sourceTag->renderedImages);
+                $tagContent .= $sourceTag->render();
+            }
         }
         $fallbackSource = $this->imageVariant->fallbackSource;
         if ($fallbackSource === null) {
@@ -41,7 +55,8 @@ class PictureTag
                 $source->artDirection?->cropVariant,
             );
         }
-        $imageTag = (new ImgTag(source: $fallbackSource, fileReference: $this->fileReference))->build();
+        $targetFormat = $this->imageVariant->targetFormats === null ? null : ImageFormat::JPG;
+        $imageTag = (new ImgTag(source: $fallbackSource, fileReference: $this->fileReference, format: $targetFormat))->build();
         foreach ($this->additionalTagAttributes as $name => $value) {
             $imageTag->addAttribute($name, $value);
         }
@@ -50,5 +65,17 @@ class PictureTag
         $pictureTag->setContent($tagContent);
 
         return $pictureTag;
+    }
+
+    private function hasLargerFiles(Tag $webpSource, Tag $jpegSource): bool
+    {
+        foreach ($webpSource->renderedImages as $key => $webpImage) {
+            [$source, $width] = $key;
+            $identifier = new Identifier($source, $width, ImageFormat::JPG);
+            if ($webpImage->getSize() > $jpegSource->renderedImages->get($identifier)->getSize()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

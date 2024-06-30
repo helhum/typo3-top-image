@@ -5,19 +5,24 @@ declare(strict_types=1);
 namespace Helhum\TopImage\Rendering;
 
 use Ds\Map;
+use Helhum\TopImage\Definition\ImageFormat;
 use Helhum\TopImage\Definition\ImageSource;
 use Helhum\TopImage\Rendering\RenderedImage\Identifier;
+use Traversable;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 
-class RenderedImages
+/**
+ * @implements \IteratorAggregate<array{ImageSource | ImageSource\FallbackSource, int, ?ImageFormat}, ProcessedFile>
+ */
+class RenderedImages implements \IteratorAggregate
 {
     /**
-     * @var Map<array{ImageSource|ImageSource\FallbackSource,int}, ProcessedFile>
+     * @var Map<array{ImageSource|ImageSource\FallbackSource, int, ?ImageFormat}, ProcessedFile>
      */
     private Map $map;
 
     /**
-     * @param Map<array{ImageSource|ImageSource\FallbackSource,int}, ProcessedFile>|null $renderedImages
+     * @param Map<array{ImageSource|ImageSource\FallbackSource, int, ?ImageFormat}, ProcessedFile>|null $renderedImages
      */
     public function __construct(
         ?Map $renderedImages = null,
@@ -54,5 +59,10 @@ class RenderedImages
     public function merge(self $renderedImages): self
     {
         return new self($this->map->merge($renderedImages->map));
+    }
+
+    public function getIterator(): Traversable
+    {
+        return $this->map->getIterator();
     }
 }

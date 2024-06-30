@@ -5,6 +5,7 @@ namespace Functional\Rendering;
 
 use Helhum\TopImage\Definition\ContentField;
 use Helhum\TopImage\Definition\CropVariant;
+use Helhum\TopImage\Definition\ImageFormat;
 use Helhum\TopImage\Definition\ImageSource;
 use Helhum\TopImage\Definition\ImageVariant;
 use Helhum\TopImage\Rendering\PictureTag;
@@ -54,6 +55,8 @@ class PictureTagTest extends FunctionalTestCase
     protected array $configurationToUseInTestInstance = [
         'GFX' => [
             'processor_path' => '/opt/homebrew/bin/',
+            'imagefile_ext' => 'gif,jpg,jpeg,tif,tiff,bmp,pcx,tga,png,pdf,ai,svg,webp',
+            'jpg_quality' => 70,
         ]
     ];
 
@@ -91,6 +94,113 @@ class PictureTagTest extends FunctionalTestCase
             additionalTagAttributes: ['class' => 'module_image'],
         );
         self::assertSame(sprintf('<picture><source srcset="%1$s 300w" width="300" height="200" /><img src="%1$s" width="300" height="200" alt="" class="module_image" /></picture>', $this->processExpectedFile($fileReference, 300)->getPublicUrl()), $pictureTag->build()->render());
+    }
+
+    #[Test]
+    public function sourceFileWithSingleWidthButMultipleFormats(): void
+    {
+        $fileReference = $this->createFileReference();
+        $imageVariant = new ImageVariant(
+            id: 'test',
+            appliesTo: [
+                new ContentField(
+                    table: 'tt_content',
+                    field: 'image',
+                    type: 'image',
+                )
+            ],
+            sources: [
+                new ImageSource(
+                    widths: [300],
+                ),
+            ],
+            targetFormats: [ImageFormat::WEBP, ImageFormat::JPG]
+        );
+
+        $pictureTag = new PictureTag(
+            imageVariant: $imageVariant,
+            fileReference: $fileReference,
+            additionalTagAttributes: ['class' => 'module_image'],
+        );
+        self::assertSame(
+            sprintf(
+                '<picture><source srcset="%1$s 300w" type="image/webp" width="300" height="200" /><source srcset="%2$s 300w" width="300" height="200" /><img src="%2$s" width="300" height="200" alt="" class="module_image" /></picture>',
+                $this->processExpectedFile(fileReference: $fileReference, width: 300, format: ImageFormat::WEBP)->getPublicUrl(),
+                $this->processExpectedFile(fileReference: $fileReference, width: 300, format: ImageFormat::JPG)->getPublicUrl(),
+            ),
+            $pictureTag->build()->render()
+        );
+    }
+
+    #[Test]
+    public function sourceFileWithSingleWidthButMultipleFormatsWithWrongOrderingInDefinition(): void
+    {
+        $fileReference = $this->createFileReference();
+        $imageVariant = new ImageVariant(
+            id: 'test',
+            appliesTo: [
+                new ContentField(
+                    table: 'tt_content',
+                    field: 'image',
+                    type: 'image',
+                )
+            ],
+            sources: [
+                new ImageSource(
+                    widths: [300],
+                ),
+            ],
+            targetFormats: [ImageFormat::JPG, ImageFormat::WEBP]
+        );
+
+        $pictureTag = new PictureTag(
+            imageVariant: $imageVariant,
+            fileReference: $fileReference,
+            additionalTagAttributes: ['class' => 'module_image'],
+        );
+        self::assertSame(
+            sprintf(
+                '<picture><source srcset="%1$s 300w" type="image/webp" width="300" height="200" /><source srcset="%2$s 300w" width="300" height="200" /><img src="%2$s" width="300" height="200" alt="" class="module_image" /></picture>',
+                $this->processExpectedFile(fileReference: $fileReference, width: 300, format: ImageFormat::WEBP)->getPublicUrl(),
+                $this->processExpectedFile(fileReference: $fileReference, width: 300, format: ImageFormat::JPG)->getPublicUrl(),
+            ),
+            $pictureTag->build()->render()
+        );
+    }
+
+    #[Test]
+    public function sourceFileWithSingleWidthButMultipleFormatsSkipsWepSourceIfItIsLargerThanJpeg(): void
+    {
+        $fileReference = $this->createFileReference(imageName: 'image2.jpg');
+        $imageVariant = new ImageVariant(
+            id: 'test',
+            appliesTo: [
+                new ContentField(
+                    table: 'tt_content',
+                    field: 'image',
+                    type: 'image',
+                )
+            ],
+            sources: [
+                new ImageSource(
+                    widths: [539],
+                ),
+            ],
+            targetFormats: [ImageFormat::WEBP, ImageFormat::JPG]
+        );
+
+        $pictureTag = new PictureTag(
+            imageVariant: $imageVariant,
+            fileReference: $fileReference,
+            additionalTagAttributes: ['class' => 'module_image'],
+        );
+        self::assertSame(
+            sprintf(
+                '<picture><source srcset="%1$s 539w" width="539" height="539" /><img src="%1$s" width="539" height="539" alt="" class="module_image" /></picture>',
+                $this->processExpectedFile(fileReference: $fileReference, width: 539, format: ImageFormat::JPG)->getPublicUrl(),
+            ),
+            $pictureTag->build()->render()
+        );
     }
 
     #[Test]
@@ -189,6 +299,75 @@ class PictureTagTest extends FunctionalTestCase
     }
 
     #[Test]
+    public function sourceFileWithMultipleWidthsAndSizesAndWebp(): void
+    {
+        $fileReference = $this->createFileReference();
+        $cropVariant = 'image_test';
+
+        $imageVariant = new ImageVariant(
+            id: 'test',
+            appliesTo: [
+                new ContentField(
+                    table: 'tt_content',
+                    field: 'image',
+                    type: 'image',
+                )
+            ],
+            sources: [
+                new ImageSource(
+                    widths: [300, 600],
+                    sizes: ['(min-width: 760px) 50vw', '100vw'],
+                    artDirection: new ImageSource\ArtDirection(
+                        cropVariant: $cropVariant,
+                        media: '(max-width: 2048px)'
+                    ),
+                ),
+                new ImageSource(
+                    widths: [1100],
+                    artDirection: new ImageSource\ArtDirection(
+                        cropVariant: $cropVariant,
+                    ),
+                ),
+            ],
+            cropVariants: [
+                new CropVariant(
+                    id: 'image_test',
+                    title: 'Image Test',
+                    allowedAspectRatios: [
+                        new CropVariant\FreeRatio()
+                    ],
+                ),
+                new CropVariant(
+                    id: 'other_image',
+                    title: 'Other Image Test',
+                    allowedAspectRatios: [
+                        new CropVariant\FreeRatio()
+                    ],
+                ),
+            ],
+            targetFormats: [ImageFormat::WEBP, ImageFormat::JPG],
+        );
+
+        $pictureTag = new PictureTag(
+            imageVariant: $imageVariant,
+            fileReference: $fileReference,
+        );
+
+        self::assertSame(
+            sprintf(
+                '<picture><source srcset="%1$s 300w, %2$s 600w" sizes="(min-width: 760px) 50vw, 100vw" media="(max-width: 2048px)" type="image/webp" width="300" height="234" /><source srcset="%3$s 300w, %4$s 600w" sizes="(min-width: 760px) 50vw, 100vw" media="(max-width: 2048px)" width="300" height="234" /><source srcset="%5$s 1100w" type="image/webp" width="1100" height="857" /><source srcset="%6$s 1100w" width="1100" height="857" /><img src="%6$s" width="1100" height="857" alt="" /></picture>',
+                $this->processExpectedFile($fileReference, 300, $cropVariant, ImageFormat::WEBP)->getPublicUrl(),
+                $this->processExpectedFile($fileReference, 600, $cropVariant, ImageFormat::WEBP)->getPublicUrl(),
+                $this->processExpectedFile($fileReference, 300, $cropVariant, ImageFormat::JPG)->getPublicUrl(),
+                $this->processExpectedFile($fileReference, 600, $cropVariant, ImageFormat::JPG)->getPublicUrl(),
+                $this->processExpectedFile($fileReference, 1100, $cropVariant, ImageFormat::WEBP)->getPublicUrl(),
+                $this->processExpectedFile($fileReference, 1100, $cropVariant, ImageFormat::JPG)->getPublicUrl(),
+            ),
+            $pictureTag->build()->render(),
+        );
+    }
+
+    #[Test]
     public function sourceFileWithMultipleWidthsAndSizesAndExplicitFallbackSource(): void
     {
         $fileReference = $this->createFileReference([
@@ -263,11 +442,11 @@ class PictureTagTest extends FunctionalTestCase
     /**
      * @param array<non-empty-string, string|int> $additionalProperties
      */
-    private function createFileReference(array $additionalProperties = []): FileReference
+    private function createFileReference(array $additionalProperties = [], string $imageName = 'image1.jpg'): FileReference
     {
         $storage = GeneralUtility::makeInstance(StorageRepository::class)->findByUid(1);
         self::assertInstanceOf(ResourceStorage::class, $storage);
-        $file = $storage->addFile(localFilePath: __DIR__ . '/../../Fixtures/Files/image1.jpg', targetFolder: $storage->getRootLevelFolder(), removeOriginal: false);
+        $file = $storage->addFile(localFilePath: __DIR__ . '/../../Fixtures/Files/' . $imageName, targetFolder: $storage->getRootLevelFolder(), removeOriginal: false);
         self::assertInstanceOf(File::class, $file);
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('sys_file_reference');
         $connection->insert(
@@ -283,17 +462,21 @@ class PictureTagTest extends FunctionalTestCase
         return GeneralUtility::makeInstance(ResourceFactory::class)->getFileReferenceObject(1);
     }
 
-    private function processExpectedFile(FileReference $fileReference, int $width, string $cropVariant = 'default'): ProcessedFile
+    private function processExpectedFile(FileReference $fileReference, int $width, string $cropVariant = 'default', ?ImageFormat $format = null): ProcessedFile
     {
         $collection = CropVariantCollection::create(self::cropVariants);
         $cropArea = $collection->getCropArea($cropVariant);
+        $processingInstructions = [
+            'maxWidth' => $width,
+            'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($fileReference->getOriginalFile()),
+        ];
+        if ($format !== null) {
+            $processingInstructions['fileExtension'] = $format->value;
+        }
 
         return $fileReference->getOriginalFile()->process(
             ProcessedFile::CONTEXT_IMAGECROPSCALEMASK,
-            [
-                'maxWidth' => $width,
-                'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($fileReference->getOriginalFile()),
-            ]
+            $processingInstructions
         );
     }
 }

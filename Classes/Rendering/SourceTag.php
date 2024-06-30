@@ -32,7 +32,7 @@ class SourceTag
         foreach ($widths as $width) {
             $renderedImage = $processing->forWidth($width)->execute();
             $minWidth = min((int)$renderedImage->getProperty('width'), $width);
-            $renderedImages = $renderedImages->add((new Identifier(source: $this->source, width: $width)), $renderedImage);
+            $renderedImages = $renderedImages->add((new Identifier(source: $this->source, width: $width, format: $this->format)), $renderedImage);
             $srcsetDefinitions[] = sprintf('%s %dw', $renderedImage->getPublicUrl(), $minWidth);
             if ($minWidth !== $width) {
                 break;

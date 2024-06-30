@@ -14,6 +14,12 @@ class ImageVariant
      * @var Map<string, CropVariant>
      */
     private readonly Map $cropVariantsMap;
+
+    /**
+     * @var ImageFormat[]|null
+     */
+    public readonly ?array $targetFormats;
+
     //
     //    /**
     //     * @var Set<ImageSource>
@@ -24,6 +30,7 @@ class ImageVariant
      * @param ContentField[] $appliesTo
      * @param ImageSource[]|null $sources
      * @param CropVariant[]|null $cropVariants
+     * @param ImageFormat[]|null $targetFormats
      */
     public function __construct(
         public readonly string $id,
@@ -31,11 +38,18 @@ class ImageVariant
         public readonly ?array $sources = null,
         public readonly ?FallbackSource $fallbackSource = null,
         public readonly ?array $cropVariants = null,
+        ?array $targetFormats = null,
     ) {
         $this->cropVariantsMap = $this->createCropVariantsMap($this->cropVariants);
         if ($this->fallbackSource?->cropVariant !== null && !$this->cropVariantsMap->hasKey($this->fallbackSource->cropVariant)) {
             throw new InvalidDefinitionException(sprintf('Invalid crop variant "%s" defined in fallback source', $this->fallbackSource->cropVariant), 1716650213);
         }
+        $this->targetFormats = match ($targetFormats === null ? null : count($targetFormats)) {
+            1 => [ImageFormat::JPG],
+            2 => [ImageFormat::WEBP, ImageFormat::JPG],
+            null => null,
+            default => throw new \UnexpectedValueException(sprintf('Target formats can not have more than two items, %d given.', count($targetFormats ?? [])), 1719594400),
+        };
         $sourcesSet = $this->createSourcesSet($this->sources);
     }
 

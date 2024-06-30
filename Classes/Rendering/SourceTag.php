@@ -6,6 +6,7 @@ namespace Helhum\TopImage\Rendering;
 
 use Helhum\TopImage\Definition\ImageFormat;
 use Helhum\TopImage\Definition\ImageSource;
+use Helhum\TopImage\Rendering\RenderedImage\DebugImage;
 use Helhum\TopImage\Rendering\RenderedImage\Identifier;
 use TYPO3\CMS\Core\Resource\FileReference;
 
@@ -15,6 +16,7 @@ class SourceTag
         private readonly ImageSource $source,
         private readonly FileReference $fileReference,
         private readonly ?ImageFormat $format = null,
+        private readonly ?string $imageVariant = null,
     ) {
     }
 
@@ -33,7 +35,7 @@ class SourceTag
             $renderedImage = $processing->forWidth($width)->execute();
             $minWidth = min((int)$renderedImage->getProperty('width'), $width);
             $renderedImages = $renderedImages->add((new Identifier(source: $this->source, width: $width, format: $this->format)), $renderedImage);
-            $srcsetDefinitions[] = sprintf('%s %dw', $renderedImage->getPublicUrl(), $minWidth);
+            $srcsetDefinitions[] = sprintf('%s %dw', (new DebugImage($renderedImage, $this->source, $this->format, $this->imageVariant))->getPublicUrl(), $minWidth);
             if ($minWidth !== $width) {
                 break;
             }

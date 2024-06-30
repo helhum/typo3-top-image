@@ -34,7 +34,7 @@ class PictureTag
             $targetFormats = $this->imageVariant->targetFormats ?? [null];
             $webpSource = null;
             foreach ($targetFormats as $targetFormat) {
-                $sourceTag = (new SourceTag(source: $source, fileReference: $this->fileReference, format: $targetFormat))->build();
+                $sourceTag = (new SourceTag(source: $source, fileReference: $this->fileReference, format: $targetFormat, imageVariant: $this->imageVariant->id))->build();
                 if ($webpSource === null && $targetFormat === ImageFormat::WEBP) {
                     $webpSource = $sourceTag;
                     continue;
@@ -56,7 +56,7 @@ class PictureTag
             );
         }
         $targetFormat = $this->imageVariant->targetFormats === null ? null : ImageFormat::JPG;
-        $imageTag = (new ImgTag(source: $fallbackSource, fileReference: $this->fileReference, format: $targetFormat))->build();
+        $imageTag = (new ImgTag(source: $fallbackSource, fileReference: $this->fileReference, format: $targetFormat, imageVariant: $this->imageVariant->id))->build();
         foreach ($this->additionalTagAttributes as $name => $value) {
             $imageTag->addAttribute($name, $value);
         }

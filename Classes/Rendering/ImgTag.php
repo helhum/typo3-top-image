@@ -6,6 +6,7 @@ namespace Helhum\TopImage\Rendering;
 
 use Helhum\TopImage\Definition\ImageFormat;
 use Helhum\TopImage\Definition\ImageSource\FallbackSource;
+use Helhum\TopImage\Rendering\RenderedImage\DebugImage;
 use Helhum\TopImage\Rendering\RenderedImage\Identifier;
 use TYPO3\CMS\Core\Resource\FileReference;
 
@@ -15,6 +16,7 @@ class ImgTag
         private readonly FallbackSource $source,
         private readonly FileReference $fileReference,
         private readonly ?ImageFormat $format = null,
+        private readonly ?string $imageVariant = null,
     ) {
     }
 
@@ -33,7 +35,7 @@ class ImgTag
             'img',
             $renderedImages,
         );
-        $imgTag->addAttribute('src', (string)$image->getPublicUrl());
+        $imgTag->addAttribute('src', (new DebugImage($image, $this->source, $this->format, $this->imageVariant))->getPublicUrl());
         $imgTag->addAttribute('width', (string)$image->getProperty('width'));
         $imgTag->addAttribute('height', (string)$image->getProperty('height'));
         if ($this->fileReference->hasProperty('alternative')) {

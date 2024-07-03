@@ -1,0 +1,2 @@
+# cat=settings; type=boolean; label=Debug Mode
+debugMode = 0

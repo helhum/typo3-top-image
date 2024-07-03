@@ -22,7 +22,7 @@ class DebugImage
 
     public function getPublicUrl(): string
     {
-        if (($GLOBALS['TYPO3_CONF_VARS']['extConf']['top_image']['debug'] ?? false) === true) {
+        if ((bool)($GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['top_image']['debugMode'] ?? false) === true) {
             return $this->createDebugImage();
         }
         return (string)$this->processedFile->getPublicUrl();

@@ -47,6 +47,8 @@ class DebugImage
         $gifBuilder = GeneralUtility::makeInstance(GifBuilder::class);
         $config = [
             'XY' => implode(',', [$width, $height]),
+            'maxWidth' => $width,
+            'maxHeight' => $height,
             'backColor' => '#C0C0C0',
             // 'format' => $this->format?->value ?? 'jpg', @todo: find out why rendering other formats results in unreadable text
             'format' => 'jpg',

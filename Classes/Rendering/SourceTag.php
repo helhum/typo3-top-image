@@ -54,8 +54,8 @@ class SourceTag
         if ($this->format?->needsTypeAttribute() === true) {
             $sourceTag->addAttribute('type', $this->format->mimeType());
         }
-        $sourceTag->addAttribute('width', (string)$renderedImages->first()->getProperty('width'));
-        $sourceTag->addAttribute('height', (string)$renderedImages->first()->getProperty('height'));
+        $sourceTag->addAttribute('width', (string)$renderedImages->last()->getProperty('width'));
+        $sourceTag->addAttribute('height', (string)$renderedImages->last()->getProperty('height'));
 
         return $sourceTag;
     }

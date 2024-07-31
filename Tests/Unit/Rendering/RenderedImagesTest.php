@@ -21,7 +21,7 @@ class RenderedImagesTest extends TestCase
         $id = new Identifier(source: new ImageSource([300]), width: 300);
         $subject = $renderedImages->add($id, $processedFile);
         self::assertSame($processedFile, $subject->get($id));
-        self::assertSame($processedFile, $subject->first());
+        self::assertSame($processedFile, $subject->last());
     }
 
     #[Test]
@@ -32,7 +32,7 @@ class RenderedImagesTest extends TestCase
         $id = new Identifier(source: new ImageSource([300]), width: 300);
         $renderedImages->add($id, $processedFile);
         $this->expectException(\UnderflowException::class);
-        $renderedImages->first();
+        $renderedImages->last();
     }
 
     #[Test]

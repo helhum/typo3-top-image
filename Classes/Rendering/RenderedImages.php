@@ -38,9 +38,9 @@ class RenderedImages implements \IteratorAggregate
         return $this->map->get($identifiedBy->toArray());
     }
 
-    public function first(): ProcessedFile
+    public function last(): ProcessedFile
     {
-        return $this->map->first()->value;
+        return $this->map->last()->value;
     }
 
     /**

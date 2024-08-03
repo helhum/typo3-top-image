@@ -2,6 +2,7 @@
     "name": "helhum/typo3-top-image",
     "description": "One stop solution to define crop variants and responsive image rendering",
     "type": "typo3-cms-extension",
+    "license": "GPL-2.0-or-later",
     "repositories": {
         "fixtures": {
             "type": "path",

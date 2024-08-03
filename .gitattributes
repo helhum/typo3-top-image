@@ -1,0 +1,5 @@
+.gitignore
+.php-cs-fixer.php
+phpstan.neon
+phpunit.xml.dist
+Tests

@@ -25,7 +25,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
  *
  * ::
  *
- *    <ti:responsiveImage image="{imageReference}" variant="news-list" class="class-of-image" />
+ *    <ti:responsiveImage image="{imageReference}" imageVariant="news-list" class="class-of-image" />
  *
  * Results in the following output within TYPO3 frontend (highly depends on configuration):
  *

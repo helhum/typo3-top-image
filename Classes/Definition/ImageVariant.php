@@ -45,8 +45,8 @@ class ImageVariant
             throw new InvalidDefinitionException(sprintf('Invalid crop variant "%s" defined in fallback source', $this->fallbackSource->cropVariant), 1716650213);
         }
         $this->targetFormats = match ($targetFormats === null ? null : count($targetFormats)) {
-            1 => [ImageFormat::JPG],
-            2 => [ImageFormat::WEBP, ImageFormat::JPG],
+            1 => [ImageFormat::ORIG],
+            2 => [ImageFormat::WEBP, ImageFormat::ORIG],
             null => null,
             default => throw new \UnexpectedValueException(sprintf('Target formats can not have more than two items, %d given.', count($targetFormats ?? [])), 1719594400),
         };

@@ -7,7 +7,9 @@ namespace Helhum\TopImage\Definition;
 enum ImageFormat: string
 {
     case JPG = 'jpg';
+    case PNG = 'png';
     case WEBP = 'webp';
+    case ORIG = '';
 
     public function needsTypeAttribute(): bool
     {

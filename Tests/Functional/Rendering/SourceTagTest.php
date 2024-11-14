@@ -289,7 +289,7 @@ class SourceTagTest extends FunctionalTestCase
             'maxWidth' => $width,
             'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($fileReference->getOriginalFile()),
         ];
-        if ($format !== null) {
+        if ($format !== null && $format !== ImageFormat::ORIG) {
             $processingInstructions['fileExtension'] = $format->value;
         }
 

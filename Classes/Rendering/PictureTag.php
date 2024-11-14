@@ -55,7 +55,7 @@ class PictureTag
                 $source->artDirection?->cropVariant,
             );
         }
-        $targetFormat = $this->imageVariant->targetFormats === null ? null : ImageFormat::JPG;
+        $targetFormat = $this->imageVariant->targetFormats === null ? null : ImageFormat::ORIG;
         $imageTag = (new ImgTag(source: $fallbackSource, fileReference: $this->fileReference, format: $targetFormat, imageVariant: $this->imageVariant->id))->build();
         foreach ($this->additionalTagAttributes as $name => $value) {
             $imageTag->addAttribute($name, $value);
@@ -71,7 +71,7 @@ class PictureTag
     {
         foreach ($webpSource->renderedImages as $key => $webpImage) {
             [$source, $width] = $key;
-            $identifier = new Identifier($source, $width, ImageFormat::JPG);
+            $identifier = new Identifier($source, $width, ImageFormat::ORIG);
             if ($webpImage->getSize() > $jpegSource->renderedImages->get($identifier)->getSize()) {
                 return true;
             }

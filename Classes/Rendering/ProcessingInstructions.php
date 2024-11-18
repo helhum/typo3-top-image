@@ -48,7 +48,7 @@ class ProcessingInstructions
             'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($this->forFile),
         ];
 
-        if ($this->format !== null) {
+        if ($this->format !== null && $this->format !== ImageFormat::ORIG) {
             $instructions['fileExtension'] = $this->format->value;
         }
 

@@ -30,10 +30,14 @@ class PictureTag
         }
         $tagContent = '';
         $renderedImages = new RenderedImages(new Map());
+        $targetFormats = $this->imageVariant->targetFormats ?? [null];
         foreach ($this->imageVariant->sources as $source) {
-            $targetFormats = $this->imageVariant->targetFormats ?? [null];
             $webpSource = null;
             foreach ($targetFormats as $targetFormat) {
+                if ($targetFormat !== ImageFormat::ORIG && $this->fileReference->getExtension() === 'svg') {
+                    continue;
+                }
+
                 $sourceTag = (new SourceTag(source: $source, fileReference: $this->fileReference, format: $targetFormat, imageVariant: $this->imageVariant->id))->build();
                 if ($webpSource === null && $targetFormat === ImageFormat::WEBP) {
                     $webpSource = $sourceTag;

@@ -76,8 +76,12 @@ class PictureTag
         foreach ($webpSource->renderedImages as $key => $webpImage) {
             [$source, $width] = $key;
             $identifier = new Identifier($source, $width, ImageFormat::ORIG);
-            if ($webpImage->getSize() > $jpegSource->renderedImages->get($identifier)->getSize()) {
-                return true;
+            try {
+                if ($webpImage->getSize() > $jpegSource->renderedImages->get($identifier)->getSize()) {
+                    return true;
+                }
+            } catch (\Exception) {
+                // Missing files must not break rendering
             }
         }
         return false;

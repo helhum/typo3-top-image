@@ -49,6 +49,6 @@ class RenderedImagesTest extends TestCase
 
     private function getProcessedFileMock(): ProcessedFile
     {
-        return $this->createMock(ProcessedFile::class);
+        return self::createStub(ProcessedFile::class);
     }
 }

@@ -47,9 +47,9 @@ class CropVariant
             if (isset($allowedAspectRatios[$ratio->id])) {
                 throw new InvalidDefinitionException(sprintf('Ratio with non-unique ID (%s) is configured. Make sure all configured ratios have unique ids.', $ratio->id), 1716032871);
             }
-            $allowedAspectRatios[] = $ratio;
+            $allowedAspectRatios[$ratio->id] = $ratio;
         }
-        return $allowedAspectRatios;
+        return array_values($allowedAspectRatios);
     }
 
     /**

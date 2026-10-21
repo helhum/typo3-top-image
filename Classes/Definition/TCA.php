@@ -23,7 +23,7 @@ class TCA
         $this->tca = ArrayUtility::sortByKeyRecursive($tca ?? $GLOBALS['TCA']);
     }
 
-    public function get(string $path = null, mixed $default = null): mixed
+    public function get(?string $path = null, mixed $default = null): mixed
     {
         if ($path === null) {
             return $this->tca;

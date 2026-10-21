@@ -6,7 +6,10 @@ return [
     ],
     'columns' => [
         'other_example_field' => [
-
+            'config' => [
+                'type' => 'file',
+                'allowed' => 'common-image-types',
+            ],
         ],
     ],
     'types' => [

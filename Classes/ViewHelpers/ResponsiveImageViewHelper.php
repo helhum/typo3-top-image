@@ -62,7 +62,7 @@ class ResponsiveImageViewHelper extends AbstractTagBasedViewHelper
         $pictureTag = new PictureTag(
             imageVariant: $this->imageVariantCollection->get($this->arguments['imageVariant']),
             fileReference: $this->arguments['image'],
-            additionalTagAttributes: array_map(static fn(string $attributeValue) => html_entity_decode($attributeValue), $this->tag->getAttributes()),
+            additionalTagAttributes: array_map(static fn (string $attributeValue) => html_entity_decode($attributeValue), $this->tag->getAttributes()),
         );
         return $pictureTag->build()->render();
     }

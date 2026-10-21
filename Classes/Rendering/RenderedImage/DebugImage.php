@@ -35,13 +35,15 @@ class DebugImage
         $fontSize = max(26 * (max($width, $height) / 800), 26);
         $cropVariant = $this->source instanceof ImageSource\FallbackSource ? $this->source->cropVariant : $this->source->artDirection?->cropVariant;
         $sizes = $this->source instanceof ImageSource\FallbackSource ? null : $this->source->sizes;
+        $media = $this->source instanceof ImageSource\FallbackSource ? null : $this->source->artDirection?->media;
+        $format = $this->format === null || $this->format === ImageFormat::ORIG ? 'original' : $this->format->value;
 
         $textLines = [];
         $textLines[] = sprintf('image variant: %s', $this->imageVariant ?? 'invalid');
         $textLines[] = sprintf('size: %s', implode('×', [$width, $height]));
-        $textLines[] = sprintf('format: %s', $this->format?->value ?: 'original');
+        $textLines[] = sprintf('format: %s', $format);
         $textLines[] = sprintf('sizes: %s', implode(', ', $sizes ?? ['none']));
-        $textLines[] = sprintf('media: %s', $this->source->artDirection?->media ?? 'none');
+        $textLines[] = sprintf('media: %s', $media ?? 'none');
         $textLines[] = sprintf('crop variant: %s', $cropVariant ?? 'none');
 
         $gifBuilder = GeneralUtility::makeInstance(GifBuilder::class);

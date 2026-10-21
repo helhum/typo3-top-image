@@ -10,7 +10,6 @@ use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
 use TYPO3\CMS\Core\Package\PackageManager;
-use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -50,6 +49,8 @@ class ImgTagTest extends FunctionalTestCase
 
     protected array $configurationToUseInTestInstance = [
         'GFX' => [
+            // Testing framework defaults to GraphicsMagick, which is usually not installed
+            'processor' => 'ImageMagick',
             'processor_path' => '/opt/homebrew/bin/',
         ]
     ];
@@ -97,7 +98,6 @@ class ImgTagTest extends FunctionalTestCase
         $storage = GeneralUtility::makeInstance(StorageRepository::class)->findByUid(1);
         self::assertInstanceOf(ResourceStorage::class, $storage);
         $file = $storage->addFile(localFilePath: __DIR__ . '/../../Fixtures/Files/image1.jpg', targetFolder: $storage->getRootLevelFolder(), removeOriginal: false);
-        self::assertInstanceOf(File::class, $file);
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('sys_file_reference');
         $connection->insert(
             'sys_file_reference',

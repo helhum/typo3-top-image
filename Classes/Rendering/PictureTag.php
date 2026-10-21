@@ -58,7 +58,11 @@ class PictureTag
         }
         $fallbackSource = $this->imageVariant->fallbackSource;
         if ($fallbackSource === null) {
-            $source = $this->imageVariant->sources[array_key_last($this->imageVariant->sources)];
+            $sources = $this->imageVariant->sources;
+            $source = array_pop($sources);
+            if ($source === null) {
+                throw new RenderingException(sprintf('Can not render a picture tag for image variant %s because it has no sources defined', $this->imageVariant->id), 1761048002);
+            }
             $fallbackSource = new FallbackSource(
                 $source->widths[0],
                 $source->artDirection?->cropVariant,

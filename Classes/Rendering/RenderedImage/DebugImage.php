@@ -70,6 +70,6 @@ class DebugImage
             [],
         );
 
-        return '/' . $gifBuilder->gifBuild();
+        return $gifBuilder->gifBuild()?->getPublicUrl() ?? (string)$this->processedFile->getPublicUrl();
     }
 }

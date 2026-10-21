@@ -40,7 +40,9 @@ class ResponsiveImageViewHelper extends AbstractTagBasedViewHelper
 
     public function initializeArguments(): void
     {
-        $this->registerUniversalTagAttributes();
+        // Registers "additionalAttributes", "data" and "aria".
+        // Any other not registered argument (class, id, title, ...) is added as tag attribute by Fluid.
+        parent::initializeArguments();
         $this->registerArgument(
             'image',
             FileReference::class,
@@ -52,13 +54,6 @@ class ResponsiveImageViewHelper extends AbstractTagBasedViewHelper
             'string',
             'Image variant to render',
             true
-        );
-        $this->registerArgument(
-            'additionalAttributes',
-            'array',
-            'Additional tag attributes',
-            false,
-            []
         );
     }
 

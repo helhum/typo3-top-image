@@ -49,6 +49,6 @@ class RenderedImagesTest extends TestCase
 
     private function getProcessedFileMock(): ProcessedFile
     {
-        return $this->getMockBuilder(ProcessedFile::class)->disableOriginalConstructor()->getMock();
+        return $this->createMock(ProcessedFile::class);
     }
 }

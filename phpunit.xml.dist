@@ -15,7 +15,7 @@
         failOnRisky="true"
         requireCoverageMetadata="false"
         cacheDirectory=".phpunit.cache"
-        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd">
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.5/phpunit.xsd">
 
     <testsuites>
         <testsuite name="Unit tests">

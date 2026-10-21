@@ -39,7 +39,7 @@ class DebugImage
         $textLines = [];
         $textLines[] = sprintf('image variant: %s', $this->imageVariant ?? 'invalid');
         $textLines[] = sprintf('size: %s', implode('×', [$width, $height]));
-        $textLines[] = sprintf('format: %s', $this->format?->value ?? 'jpg');
+        $textLines[] = sprintf('format: %s', $this->format?->value ?: 'original');
         $textLines[] = sprintf('sizes: %s', implode(', ', $sizes ?? ['none']));
         $textLines[] = sprintf('media: %s', $this->source->artDirection?->media ?? 'none');
         $textLines[] = sprintf('crop variant: %s', $cropVariant ?? 'none');

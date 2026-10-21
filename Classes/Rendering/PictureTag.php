@@ -30,22 +30,27 @@ class PictureTag
         }
         $tagContent = '';
         $renderedImages = new RenderedImages(new Map());
+        // Target formats are normalized by ImageVariant: conversion formats first, fallback format last
         $targetFormats = $this->imageVariant->targetFormats ?? [null];
+        $fallbackFormat = $targetFormats[array_key_last($targetFormats)];
+        $isSvg = $this->fileReference->getExtension() === 'svg';
         foreach ($this->imageVariant->sources as $source) {
-            $webpSource = null;
+            $conversionSources = [];
             foreach ($targetFormats as $targetFormat) {
-                if ($targetFormat !== ImageFormat::ORIG && $this->fileReference->getExtension() === 'svg') {
+                if ($isSvg && $targetFormat?->isConversionFormat() === true) {
                     continue;
                 }
-
                 $sourceTag = (new SourceTag(source: $source, fileReference: $this->fileReference, format: $targetFormat, imageVariant: $this->imageVariant->id))->build();
-                if ($webpSource === null && $targetFormat === ImageFormat::WEBP) {
-                    $webpSource = $sourceTag;
+                if ($targetFormat !== $fallbackFormat) {
+                    $conversionSources[] = $sourceTag;
                     continue;
                 }
-                if ($webpSource !== null && !$this->hasLargerFiles($webpSource, $sourceTag)) {
-                    $renderedImages = $renderedImages->merge($webpSource->renderedImages);
-                    $tagContent .= $webpSource->render();
+                foreach ($conversionSources as $conversionSource) {
+                    if ($this->hasLargerFiles($conversionSource, $sourceTag, $fallbackFormat)) {
+                        continue;
+                    }
+                    $renderedImages = $renderedImages->merge($conversionSource->renderedImages);
+                    $tagContent .= $conversionSource->render();
                 }
                 $renderedImages = $renderedImages->merge($sourceTag->renderedImages);
                 $tagContent .= $sourceTag->render();
@@ -59,8 +64,7 @@ class PictureTag
                 $source->artDirection?->cropVariant,
             );
         }
-        $targetFormat = $this->imageVariant->targetFormats === null ? null : ImageFormat::ORIG;
-        $imageTag = (new ImgTag(source: $fallbackSource, fileReference: $this->fileReference, format: $targetFormat, imageVariant: $this->imageVariant->id))->build();
+        $imageTag = (new ImgTag(source: $fallbackSource, fileReference: $this->fileReference, format: $fallbackFormat, imageVariant: $this->imageVariant->id))->build();
         foreach ($this->additionalTagAttributes as $name => $value) {
             $imageTag->addAttribute($name, $value);
         }
@@ -71,13 +75,18 @@ class PictureTag
         return $pictureTag;
     }
 
-    private function hasLargerFiles(Tag $webpSource, Tag $jpegSource): bool
+    /**
+     * Checks whether any of the converted images is larger than
+     * its counterpart in the fallback format. If so, rendering the
+     * conversion source would be a waste of bandwidth.
+     */
+    private function hasLargerFiles(Tag $conversionSource, Tag $fallbackSource, ?ImageFormat $fallbackFormat): bool
     {
-        foreach ($webpSource->renderedImages as $key => $webpImage) {
+        foreach ($conversionSource->renderedImages as $key => $convertedImage) {
             [$source, $width] = $key;
-            $identifier = new Identifier($source, $width, ImageFormat::ORIG);
+            $identifier = new Identifier($source, $width, $fallbackFormat);
             try {
-                if ($webpImage->getSize() > $jpegSource->renderedImages->get($identifier)->getSize()) {
+                if ($convertedImage->getSize() > $fallbackSource->renderedImages->get($identifier)->getSize()) {
                     return true;
                 }
             } catch (\Exception) {

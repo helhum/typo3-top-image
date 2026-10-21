@@ -16,7 +16,7 @@ class ImageVariant
     private readonly Map $cropVariantsMap;
 
     /**
-     * @var ImageFormat[]|null
+     * @var non-empty-list<ImageFormat>|null
      */
     public readonly ?array $targetFormats;
 
@@ -44,13 +44,44 @@ class ImageVariant
         if ($this->fallbackSource?->cropVariant !== null && !$this->cropVariantsMap->hasKey($this->fallbackSource->cropVariant)) {
             throw new InvalidDefinitionException(sprintf('Invalid crop variant "%s" defined in fallback source', $this->fallbackSource->cropVariant), 1716650213);
         }
-        $this->targetFormats = match ($targetFormats === null ? null : count($targetFormats)) {
-            1 => [ImageFormat::ORIG],
-            2 => [ImageFormat::WEBP, ImageFormat::ORIG],
-            null => null,
-            default => throw new \UnexpectedValueException(sprintf('Target formats can not have more than two items, %d given.', count($targetFormats ?? [])), 1719594400),
-        };
+        $this->targetFormats = $targetFormats === null ? null : $this->normalizeTargetFormats($targetFormats);
         $sourcesSet = $this->createSourcesSet($this->sources);
+    }
+
+    /**
+     * Brings target formats into rendering order:
+     * conversion formats (AVIF before WEBP) first, exactly one fallback format last.
+     * When only conversion formats are given, the original file format is used as fallback.
+     *
+     * @param ImageFormat[] $targetFormats
+     * @return non-empty-list<ImageFormat>
+     */
+    private function normalizeTargetFormats(array $targetFormats): array
+    {
+        if ($targetFormats === []) {
+            throw new \UnexpectedValueException('Target formats must not be empty.', 1719594400);
+        }
+        $conversionFormats = [];
+        $fallbackFormats = [];
+        foreach ($targetFormats as $targetFormat) {
+            if ($targetFormat->isConversionFormat()) {
+                $conversionFormats[$targetFormat->value] = $targetFormat;
+            } else {
+                $fallbackFormats[$targetFormat->value] = $targetFormat;
+            }
+        }
+        if (count($fallbackFormats) > 1) {
+            throw new \UnexpectedValueException(sprintf('Only one fallback target format is allowed, %d given.', count($fallbackFormats)), 1761048001);
+        }
+        $orderedFormats = [];
+        foreach ([ImageFormat::AVIF, ImageFormat::WEBP] as $conversionFormat) {
+            if (isset($conversionFormats[$conversionFormat->value])) {
+                $orderedFormats[] = $conversionFormat;
+            }
+        }
+        $orderedFormats[] = array_values($fallbackFormats)[0] ?? ImageFormat::ORIG;
+
+        return $orderedFormats;
     }
 
     /**
@@ -64,6 +95,7 @@ class ImageVariant
             $this->sources,
             $this->fallbackSource,
             $this->cropVariants,
+            $this->targetFormats,
         );
     }
 

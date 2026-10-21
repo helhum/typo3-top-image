@@ -16,7 +16,3 @@ parameters:
          - Tests/
     ignoreErrors: []
     excludePaths: []
-    typo3:
-        requestGetAttributeMapping:
-            extbase: TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters
-            frontend.controller: TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
